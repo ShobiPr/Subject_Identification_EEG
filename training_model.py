@@ -48,8 +48,7 @@ def get_dataset(n_subjects=1, n_sessions=1):
     return {"data": ch_fs_instances, "target": ch_tags_instances}  # 2 (data, target), data:9, target: 9
 
 
-dataset = get_dataset(n_subjects=3, n_sessions=2)
-
+# dataset = get_dataset(n_subjects=3, n_sessions=2)
 
 """
 if __name__ == '__main__':

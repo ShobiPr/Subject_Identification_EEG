@@ -43,14 +43,6 @@ def notch_filter(instance, sr, f0=60.0, Q=10.0):
     return np.array(filtered_instance)
 
 
-# Process the common average reference on tge signals
-def CAR(channels):
-    n, tf = channels.shape
-    for t in range(0, tf):
-        channels[:, t] = np.array(channels[:, t] - (1 / n) * np.sum(channels[:, t]))
-    return channels
-
-
 def common_average_reference(instance):
     CAR = []
     for i, channel in enumerate(instance):
@@ -62,6 +54,59 @@ def preprocessing(f_instance, instances, sr):
     instance = np.array(instances[f_instance, :, 1:-1]).transpose()
     filtered_instance = notch_filter(instance, sr)
     averaged_instance = common_average_reference(filtered_instance)
+    """
+    timep = 1.3  # Number of seconds
+    nsamp = 260  # Number of samples
+    t = np.linspace(0.0, timep, nsamp)
+    fig, axes = plt.subplots(nrows=2)
+    # plot time signal:
+    axes[0].set_title("Signal")
+    axes[0].plot(t, filtered_instance[4], color='C0')
+    axes[0].set_xlabel("Time")
+    axes[0].set_ylabel("Amplitude")
+    # plot different spectrum types:
+    axes[1].set_title("Magnitude Spectrum")
+    axes[1].magnitude_spectrum(filtered_instance[4], Fs=sr, color='C1')
+    fig.tight_layout()
+    plt.show()
+    """
+
+    """
+    t = np.linspace(0.0, 1.3, 260)
+    s = instance[0]
+    s1 = filtered_instance[0]
+    fft = np.fft.fft(s)
+    fft1 = np.fft.fft(s1)
+    T = t[1] - t[0]
+    N = s.size
+    f = np.linspace(0, 1 / T, N)
+
+    fig, axes = plt.subplots(nrows=2)
+    axes[0].set_title("instance")
+    axes[0].plot(f[:N // 2], np.abs(fft)[:N // 2] * 1 / N)
+    axes[0].set_xlabel("Time")
+    axes[0].set_ylabel("Amplitude")
+    axes[1].set_title("filtered_instance")
+    axes[1].plot(f[:N // 2], np.abs(fft1)[:N // 2] * 1 / N)
+    axes[1].set_xlabel("Time")
+    axes[1].set_ylabel("Amplitude")
+    fig.tight_layout()
+    plt.show()
+
+    """
+    t = np.linspace(0.0, 1.3, 260)
+    s = averaged_instance[0]
+    fft = np.fft.fft(s)
+    T = t[1] - t[0]
+    N = s.size
+
+    f = np.linspace(0, 1/T, N)
+
+    plt.ylabel("Amplitude")
+    plt.xlabel("Frequency [Hz]")
+    plt.bar(f[:N // 2], np.abs(fft)[:N // 2] * 1 / N)  # 1 / N is a normalization factor
+    plt.show()
+
     return averaged_instance
 
 
@@ -81,9 +126,8 @@ def get_dataset(n_subjects=1, n_sessions=1):
     return {"data": ch_fs_instances, "target": ch_tags_instances}  # 2 (data, target), data:9, target: 9
 
 
-# dataset = get_dataset(n_subjects=3, n_sessions=1)
+dataset = get_dataset(n_subjects=3, n_sessions=1)
 
-"""
 for i, ii in enumerate(dataset['data']):
     color = "red" if dataset['target'][i] == "subject_1" else (
         "green" if dataset['target'][i] == "subject_2" else "blue")
@@ -92,4 +136,3 @@ plt.xlabel('Feature')
 plt.ylabel('Value')
 plt.grid(True)
 plt.show()
-"""
