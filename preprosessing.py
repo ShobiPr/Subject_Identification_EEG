@@ -4,9 +4,8 @@ import numpy as np
 import statistics as stats
 import matplotlib.pyplot as plt
 import math
-from scipy.fftpack import fft
+from scipy.signal import butter, lfilter
 from scipy import signal
-import warnings
 from featuresExtraction import get_features
 import warnings
 
@@ -43,14 +42,6 @@ def notch_filter(instance, sr, f0=60.0, Q=10.0):
     return np.array(filtered_instance)
 
 
-# Process the common average reference on tge signals
-def CAR(channels):
-    n, tf = channels.shape
-    for t in range(0, tf):
-        channels[:, t] = np.array(channels[:, t] - (1 / n) * np.sum(channels[:, t]))
-    return channels
-
-
 def common_average_reference(instance):
     CAR = []
     for i, channel in enumerate(instance):
@@ -58,19 +49,28 @@ def common_average_reference(instance):
     return np.array(CAR)
 
 
+def butter_lowpass_filter(data, fs, cutoff=50.0, order=6):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    y = lfilter(b, a, data)
+    return y
+
+
 def preprocessing(f_instance, instances, sr):
     instance = np.array(instances[f_instance, :, 1:-1]).transpose()
-    filtered_instance = notch_filter(instance, sr)
-    averaged_instance = common_average_reference(filtered_instance)
-    return averaged_instance
+    filtered_instance = []
+    for i, channel in enumerate(instance):
+        filtered_instance.append(butter_lowpass_filter(channel, sr))
+    return np.array(filtered_instance)
 
 
-def get_dataset(n_subjects=1, n_sessions=1):
+def get_dataset():
     sr = 200
     ch_fs_instances = []
     ch_tags_instances = []
-    for subject in range(1, n_subjects + 1):  # 27
-        for session in range(1, n_sessions + 1):  # 6
+    for subject in range(1, 4):  # 27
+        for session in range(1, 2):  # 6
             s_s_chs, _header = get_subdataset(subject, session)
             _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
             instances = get_samples(_index, s_s_chs, sr)
@@ -78,12 +78,11 @@ def get_dataset(n_subjects=1, n_sessions=1):
                 instance = preprocessing(f_instance, instances, sr)
                 ch_fs_instances.append(get_features(instance))
                 ch_tags_instances.append('subject_{0}'.format(subject))
-    return {"data": ch_fs_instances, "target": ch_tags_instances}  # 2 (data, target), data:9, target: 9
+    return {"data": ch_fs_instances, "target": ch_tags_instances}
 
 
-# dataset = get_dataset(n_subjects=3, n_sessions=1)
+dataset = get_dataset()
 
-"""
 for i, ii in enumerate(dataset['data']):
     color = "red" if dataset['target'][i] == "subject_1" else (
         "green" if dataset['target'][i] == "subject_2" else "blue")
@@ -92,4 +91,3 @@ plt.xlabel('Feature')
 plt.ylabel('Value')
 plt.grid(True)
 plt.show()
-"""

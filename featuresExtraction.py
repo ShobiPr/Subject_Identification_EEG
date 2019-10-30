@@ -3,54 +3,39 @@ import numpy as np
 import statistics as stats
 from scipy.stats import kurtosis
 from scipy.stats import skew
+from scipy.signal import hilbert
 from pyhht import EMD
+from pyhht.utils import inst_freq
 import matplotlib.pyplot as plt
 
 
-def teager_energy(data):
+def teager_energy(signal):
+    data = hilbert(signal)
     sum_values = sum(abs(data[x] ** 2) if x == 0
                      else abs(data[x] ** 2 - data[x - 1] * data[x + 1])
                      for x in range(0, len(data) - 1))
     return np.log10((1 / float(len(data))) * sum_values)
 
 
-def instantaneous_energy(data):
+def instantaneous_energy(signal):
+    data = hs = hilbert(signal)
     return np.log10((1 / float(len(data))) * sum(i ** 2 for i in data))
-
-
-
 
 
 # Extract IMFs from EEG
 def get_imfs(signal):
     try:
         signal = np.array(signal)
-        decomposer_signal = EMD(signal, n_imfs=1)
+        decomposer_signal = EMD(signal, n_imfs=4)
         imfs = decomposer_signal.decompose()
         if len(imfs) < 2:
             print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
             raise ValueError("imfs {}".format(len(imfs)))
         # Return first IMF and residue
-        return imfs[0:2]
+        return imfs[1:2]
     except Exception as e:
         print(e)
         return []
-
-
-
-
-def first_order_diff(X):
-    """ Compute the first order difference of a time series.
-		For a time series X = [x(1), x(2), ... , x(N)], its	first order
-		difference is:
-		Y = [x(2) - x(1) , x(3) - x(2), ..., x(N) - x(N-1)]
-	"""
-    D = []
-
-    for i in range(1, len(X)):
-        D.append(X[i] - X[i - 1])
-
-    return D
 
 
 def pfd(a):
@@ -83,6 +68,11 @@ def hfd(a, k_max=None):
     return p[0]
 
 
+
+
+# def minkowski_distance():
+
+
 # Extract statistics values from imfs
 def get_statistics_values(imfs):
     feat = []
@@ -103,15 +93,17 @@ def get_statistics_values(imfs):
 
 
 # Extract energy values from imfs
-def get_energy_values(imfs):
+def get_energy_values(_vector):
     feat = []
     # For each imf compute
-    for imf in imfs:
-        _energy = instantaneous_energy(imf)
-        _teager_energy = teager_energy(imf)
-        _hfd = hfd(imf, 50)
-        _pfd = pfd(imf)
-        feat += [_energy, _teager_energy, _hfd, _pfd]
+    # for imf in imfs:
+    for ii, _vec in enumerate(_vector):
+        feat += [
+            instantaneous_energy(_vec),
+            teager_energy(_vec),
+            hfd(_vec),
+            pfd(_vec)
+        ]
     return feat
 
 
@@ -121,7 +113,7 @@ def get_values_f(_vector):
         feat += [
             # stats.mean(_vec),
             # np.var(_vec),
-            np.std(_vec),
+            # np.std(_vec),
             # np.median(_vec),
             # min(_vec),
             # max(_vec),
@@ -148,8 +140,6 @@ def get_features(instance):
             imfs = get_imfs(channel)
             # Compute feature values for imfs corresponding to one channel and join
             # features_vector += get_statistics_values(imfs)
-            # features_vector += get_energy_values(imfs)
-            features_vector += get_values_f(imfs)
+            features_vector += get_energy_values(imfs)
+            # features_vector += get_values_f(imfs)
     return features_vector
-
-
