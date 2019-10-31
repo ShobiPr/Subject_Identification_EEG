@@ -20,25 +20,6 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
     return y
 
 
-# Filter requirements
-order = 6
-fs = 200.0  # sample rate, Hz
-cutoff = 50.0 # desired cutoff frequency of the filter, Hz
-
-# Get the filter coefficients so we can check its frequency response.
-b, a = butter_lowpass(cutoff, fs, order)
-
-# Plot the frequency response.
-w, h = freqz(b, a, worN=8000)
-plt.subplot(2, 1, 1)
-plt.plot(0.5*fs*w/np.pi, np.abs(h), 'b')
-plt.plot(cutoff, 0.5*np.sqrt(2), 'ko')
-plt.axvline(cutoff, color='k')
-plt.xlim(0, 0.5*fs)
-plt.title("Lowpass Filter Frequency Response")
-plt.xlabel('Frequency [Hz]')
-plt.grid()
-
 def get_samples(_index, s_s_chs, sr, _size=1.3):
     instances = []
     for _ind in _index:
@@ -69,9 +50,29 @@ def get_dataset():
 dataset = get_dataset()
 
 
+# Filter requirements
+order = 6
+fs = 200.0  # sample rate, Hz
+cutoff = 50.0  # desired cutoff frequency of the filter, Hz
+
 T = 1.3  # seconds
 n = int(T * fs)  # tot n_samples
 t = np.linspace(0, T, n)
+
+# Get the filter coefficients so we can check its frequency response.
+b, a = butter_lowpass(cutoff, fs, order)
+
+# Plot the frequency response.
+w, h = freqz(b, a, worN=8000)
+plt.subplot(2, 1, 1)
+plt.plot(0.5*fs*w/np.pi, np.abs(h), 'b')
+plt.plot(cutoff, 0.5*np.sqrt(2), 'ko')
+plt.axvline(cutoff, color='k')
+plt.xlim(0, 0.5*fs)
+plt.title("Lowpass Filter Frequency Response")
+plt.xlabel('Frequency [Hz]')
+plt.grid()
+
 
 data = dataset[5]
 

@@ -26,13 +26,14 @@ def instantaneous_energy(signal):
 def get_imfs(signal):
     try:
         signal = np.array(signal)
-        decomposer_signal = EMD(signal, n_imfs=4)
+        decomposer_signal = EMD(signal, n_imfs=5)
         imfs = decomposer_signal.decompose()
         if len(imfs) < 2:
             print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
             raise ValueError("imfs {}".format(len(imfs)))
         # Return first IMF and residue
-        return imfs[1:2]
+        #return imfs[1:3]
+        return imfs[1:3]
     except Exception as e:
         print(e)
         return []
@@ -68,8 +69,6 @@ def hfd(a, k_max=None):
     return p[0]
 
 
-
-
 # def minkowski_distance():
 
 
@@ -78,31 +77,31 @@ def get_statistics_values(imfs):
     feat = []
     # For each imf compute 9 values and return it in a single vector. (5 values in this example)
     # Mean, maximum, minimum, standard deviation, variance, kurtosis, skewness, sum and median
-    for imf in imfs:
-        # '''
-        _mean = stats.mean(imf)
-        _var = np.var(imf)
-        _std = np.std(imf)
-        _kurtosis = kurtosis(imf)
-        _skew = skew(imf)
-        _max = np.max(imf)
-        _min = np.min(imf)
-        _median = stats.median(imf)
-        feat += [_mean, _var, _std, _kurtosis, _skew, _max, _min, _median]
+    for ii, imf in enumerate(imfs):
+        feat += [
+            # stats.mean(imf),
+            # np.var(imf),
+            np.std(imf),
+            kurtosis(imf),
+            skew(imf),
+            np.max(imf),
+            # np.min(imf),
+            # stats.median(imf)
+        ]
     return feat
 
 
 # Extract energy values from imfs
-def get_energy_values(_vector):
+def get_energy_values(imfs):
     feat = []
     # For each imf compute
     # for imf in imfs:
-    for ii, _vec in enumerate(_vector):
+    for ii, imf in enumerate(imfs):
         feat += [
-            instantaneous_energy(_vec),
-            teager_energy(_vec),
-            hfd(_vec),
-            pfd(_vec)
+            instantaneous_energy(imf),
+            teager_energy(imf),
+            # hfd(imf),
+            # pfd(imf)
         ]
     return feat
 
@@ -113,17 +112,17 @@ def get_values_f(_vector):
         feat += [
             # stats.mean(_vec),
             # np.var(_vec),
-            # np.std(_vec),
+            np.std(_vec),
             # np.median(_vec),
             # min(_vec),
-            # max(_vec),
+            max(_vec),
             # sum(_vec),
-            # skew(_vec),
-            # kurtosis(_vec),
+            skew(_vec),
+            kurtosis(_vec),
             instantaneous_energy(_vec),
             teager_energy(_vec),
-            hfd(_vec),
-            pfd(_vec),
+            # hfd(_vec),
+            # pfd(_vec),
         ]
     return feat
 
@@ -135,11 +134,11 @@ def get_features(instance):
     features_vector = []
     # channels = channels[0:2]
     for i, channel in enumerate(instance):
-        if i < 3:
+        if i < 5:
             # Compute the imf for ech channel
             imfs = get_imfs(channel)
             # Compute feature values for imfs corresponding to one channel and join
             # features_vector += get_statistics_values(imfs)
-            features_vector += get_energy_values(imfs)
-            # features_vector += get_values_f(imfs)
+            # features_vector += get_energy_values(imfs)
+            features_vector += get_values_f(imfs)
     return features_vector

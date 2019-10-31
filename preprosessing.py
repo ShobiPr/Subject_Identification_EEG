@@ -7,6 +7,7 @@ import math
 from scipy.signal import butter, lfilter
 from scipy import signal
 from featuresExtraction import get_features
+from filters import butter_lowpass_filter, butter_highpass_filter
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -49,24 +50,17 @@ def common_average_reference(instance):
     return np.array(CAR)
 
 
-def butter_lowpass_filter(data, fs, cutoff=50.0, order=6):
-    nyq = 0.5 * fs
-    normal_cutoff = cutoff / nyq
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)
-    y = lfilter(b, a, data)
-    return y
-
-
-def preprocessing(f_instance, instances, sr):
+def preprocessing(cutoff_lowpass, f_instance, instances, sr):
     instance = np.array(instances[f_instance, :, 1:-1]).transpose()
     filtered_instance = []
     for i, channel in enumerate(instance):
-        filtered_instance.append(butter_lowpass_filter(channel, sr))
+        filtered_instance.append(butter_lowpass_filter(channel, cutoff_lowpass, sr, order=6))
     return np.array(filtered_instance)
 
 
 def get_dataset():
     sr = 200
+    cutoff_lowpass = 50.0
     ch_fs_instances = []
     ch_tags_instances = []
     for subject in range(1, 4):  # 27
@@ -75,13 +69,13 @@ def get_dataset():
             _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
             instances = get_samples(_index, s_s_chs, sr)
             for f_instance in range(1, 2):  # len(instances) 60 instances
-                instance = preprocessing(f_instance, instances, sr)
+                instance = preprocessing(cutoff_lowpass, f_instance, instances, sr)
                 ch_fs_instances.append(get_features(instance))
                 ch_tags_instances.append('subject_{0}'.format(subject))
     return {"data": ch_fs_instances, "target": ch_tags_instances}
 
-
 dataset = get_dataset()
+
 
 for i, ii in enumerate(dataset['data']):
     color = "red" if dataset['target'][i] == "subject_1" else (
