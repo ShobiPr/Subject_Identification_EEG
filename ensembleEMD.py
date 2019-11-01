@@ -59,6 +59,20 @@ vis.plot_instant_freq(t, imfs=imfs)
 vis.show()
 
 
+def get_imfs_with_eemd(signal):
+    try:
+        signal = np.array(signal)
+        components = EEMD().eemd(signal, max_imf=3)
+        imfs, res = components[:-1], components[-1]
+        if len(imfs) < 2:
+            print("imfs {} ++++++++++++++++++++++++++".format(len(imfs)))
+            raise ValueError("imfs{}".format(len(imfs)))
+        return imfs
+    except Exception as a:
+        print(e)
+        return []
+
+
 
 
 

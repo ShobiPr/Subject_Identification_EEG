@@ -5,6 +5,7 @@ from scipy.stats import kurtosis
 from scipy.stats import skew
 from scipy.signal import hilbert
 from pyhht import EMD
+from PyEMD.EEMD import EEMD
 from pyhht.utils import inst_freq
 import matplotlib.pyplot as plt
 
@@ -20,6 +21,20 @@ def teager_energy(signal):
 def instantaneous_energy(signal):
     data = hs = hilbert(signal)
     return np.log10((1 / float(len(data))) * sum(i ** 2 for i in data))
+
+
+def get_imfs_with_eemd(signal):
+    try:
+        signal = np.array(signal)
+        components = EEMD().eemd(signal, max_imf=3)
+        imfs, res = components[1], components[-1]
+        if len(imfs) < 2:
+            print("imfs {} ++++++++++++++++++++++++++".format(len(imfs)))
+            raise ValueError("imfs{}".format(len(imfs)))
+        return imfs
+    except Exception as e:
+        print(e)
+        return []
 
 
 # Extract IMFs from EEG
@@ -137,6 +152,7 @@ def get_features(instance):
         if i < 5:
             # Compute the imf for ech channel
             imfs = get_imfs(channel)
+            # imfs = get_imfs_with_eemd(channel)
             # Compute feature values for imfs corresponding to one channel and join
             # features_vector += get_statistics_values(imfs)
             # features_vector += get_energy_values(imfs)
