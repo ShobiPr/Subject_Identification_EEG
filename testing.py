@@ -53,12 +53,13 @@ def instantaneous_amplitude(signal):
 
 
 sr = 200
+cutoff_lowpass = 50.0
 ch_fs_instances = []
 ch_tags_instances = []
 s_s_chs, _header = get_subdataset(2,1)
 _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
 instances = get_samples(_index, s_s_chs, sr)
-instance = preprocessing(1, instances, sr)  # (57, 260)
+instance = preprocessing(cutoff_lowpass, 1, instances, sr)  # (57, 260)
 ch_fs_instances.append(get_features(instance))
 
 
