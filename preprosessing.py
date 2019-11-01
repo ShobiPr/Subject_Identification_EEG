@@ -76,7 +76,7 @@ def get_dataset():
 
 dataset = get_dataset()
 
-
+"""
 for i, ii in enumerate(dataset['data']):
     color = "red" if dataset['target'][i] == "subject_1" else (
         "green" if dataset['target'][i] == "subject_2" else "blue")
@@ -85,3 +85,4 @@ plt.xlabel('Feature')
 plt.ylabel('Value')
 plt.grid(True)
 plt.show()
+"""

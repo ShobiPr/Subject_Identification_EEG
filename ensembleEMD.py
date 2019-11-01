@@ -2,8 +2,9 @@ from __future__ import division
 import numpy as np
 import pickle
 import math
+from PyEMD.EEMD import EEMD
+from PyEMD.visualisation import Visualisation
 import matplotlib.pyplot as plt
-from classefiers import selector
 from featuresExtraction import get_features
 from preprosessing import preprocessing
 import warnings
@@ -35,37 +36,30 @@ def get_subdataset(_S=1, Sess=1):
 def get_dataset(n_subjects=1, n_sessions=1):
     sr = 200
     cutoff_lowpass = 50.0
-    ch_fs_instances = []
-    ch_tags_instances = []
     for subject in range(1, n_subjects + 1):  # 27
         for session in range(1, n_sessions + 1):  # 6
             s_s_chs, _header = get_subdataset(subject, session)
             _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
             instances = get_samples(_index, s_s_chs, sr)
-            for f_instance in range(1, 2):  # len(instances) 60 instances
-                instance = preprocessing(cutoff_lowpass, f_instance, instances, sr)
-                ch_fs_instances.append(get_features(instance))
-                ch_tags_instances.append('subject_{0}'.format(subject))
-    return {"data": ch_fs_instances, "target": ch_tags_instances}  # 2 (data, target), data:9, target: 9
+            instance = preprocessing(cutoff_lowpass, 1, instances, sr)
+    return instance  # 2 (data, target), data:9, target: 9
 
 
-dataset = get_dataset(n_subjects=3, n_sessions=2)
+dataset = get_dataset()
+t = np.linspace(0, 1.3, 260)
 
-"""
-if __name__ == '__main__':
-    n_subjects = 3
-    n_sessions = 5
-    dataset = get_dataset(n_subjects=n_subjects, n_sessions=n_sessions)
+channel1 = dataset[0]
 
-    C_F_V = 3
-    RANDOM_STATE = 0
-    dataTraining = dataset['data']
-    targetTraining = dataset['target']
-    result = selector(dataTraining, targetTraining)
+components = EEMD().eemd(channel1, max_imf=3)
+imfs, res = components[:-1], components[-1]
 
-    print("Best classifier {0} with accuracy {1}".format(result['classifier'], result['accuracy']))
+vis = Visualisation()
+vis.plot_imfs(imfs=imfs, residue=res, t=t, include_residue=False)
+vis.plot_instant_freq(t, imfs=imfs)
+vis.show()
 
-    # saving the model
-    # model_name = 'clf.sav'
-    # pickle.dump(result["clf"], open(model_name, 'wb'))
-"""
+
+
+
+
+
