@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import math
 import numpy as np
 from scipy import signal
-from scipy import fftpack
-from skimage import util
 import warnings
+
+warnings.filterwarnings("ignore")
 
 
 def get_samples(_index, s_s_chs, sr, _size=1.3):
@@ -43,9 +43,9 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
-    # y = lfilter(b, a, data)
     y = signal.filtfilt(b, a, data)
     return y
+
 
 def butter_highpass_filter(data, cutoff, fs, order=5):
     nyq = 0.5 * fs
@@ -54,13 +54,34 @@ def butter_highpass_filter(data, cutoff, fs, order=5):
     y = signal.filtfilt(b, a, data)
     return y
 
+
 def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
     low = lowcut / nyq
     high = highcut / nyq
     b, a = butter(order, [low, high], btype='band')
-    y = lfilter(b, a, data)
+    y = signal.filtfilt(b, a, data)
     return y
+
+
+def delta_wave(signal, fs):
+    return butter_bandpass_filter(signal, 0.5, 4.0, fs)
+
+
+def theta_wave(signal, fs):
+    return butter_bandpass_filter(signal, 4.0, 8.0, fs)
+
+
+def alpha_wave(signal, fs):
+    return butter_bandpass_filter(signal, 8.0, 12.0, fs)
+
+
+def beta_wave(signal, fs):
+    return butter_bandpass_filter(signal, 12.0, 30.0, fs)
+
+
+def gamma_wave(signal, fs):
+    return butter_highpass_filter(signal, 30.0, fs)
 
 
 # Plots
@@ -74,6 +95,8 @@ def plot_frequency_response_low(b, a, fs, cutoff_lowpass):
     plt.title("Lowpass Filter Frequency Response")
     plt.xlabel('Frequency [Hz]')
     plt.grid()
+
+
 def plot_frequency_response_high(b, a, fs, cutoff_highpass):
     w, h = freqz(b, a, worN=8000)
     plt.subplot(4, 1, 3)
@@ -84,6 +107,8 @@ def plot_frequency_response_high(b, a, fs, cutoff_highpass):
     plt.title("Higpass Filter Frequency Response")
     plt.xlabel('Frequency [Hz]')
     plt.grid()
+
+
 def plot_lowpass_highpass():
     # Filter requirements
     order = 6
@@ -126,6 +151,7 @@ def plot_lowpass_highpass():
     plt.legend()
     plt.show()
 
+
 def plot_lowpass():
     fs = 200.0  # sample rate, Hz
     cutoff_lowpass = 50.0  # desired cutoff frequency of the filter, Hz
@@ -146,44 +172,89 @@ def plot_lowpass():
     plt.show()
 
 
-"""
-fs = 200.0
-lowcut = 1.0
-highcut = 50.0
+def plot_frequency_bands():
+    order = 6
+    fs = 200.0  # sample rate, Hz
+    lowcut = 50.0  # desired cutoff frequency of the filter, Hz
+    highcut = 0.01
+
+    T = 1.3  # seconds
+    n = int(T * fs)  # tot n_samples
+    t = np.linspace(0, T, n)
+
+    dataset = get_dataset()
+    data = dataset[0]
+
+    plt.subplot(5, 1, 1)
+    delta = delta_wave(data, fs)
+    plt.plot(t, delta, label='delta')
+    plt.xlabel('time (seconds)')
+    plt.grid(True)
+    plt.axis('tight')
+    plt.legend(loc='upper left')
+
+    plt.subplot(5,1,2)
+    theta = theta_wave(data, fs)
+    plt.plot(t, theta, label='theta')
+    plt.xlabel('time (seconds)')
+    plt.grid(True)
+    plt.axis('tight')
+    plt.legend(loc='upper left')
+
+    plt.subplot(5,1,3)
+    alpha = alpha_wave(data, fs)
+    plt.plot(t, alpha, label='alpha')
+    plt.xlabel('time (seconds)')
+    plt.grid(True)
+    plt.axis('tight')
+    plt.legend(loc='upper left')
+
+    plt.subplot(5,1,4)
+    beta = beta_wave(data, fs)
+    plt.plot(t, beta, label='beta')
+    plt.xlabel('time (seconds)')
+    plt.grid(True)
+    plt.axis('tight')
+    plt.legend(loc='upper left')
+
+    plt.subplot(5,1,5)
+    gamma = gamma_wave(data, fs)
+    plt.plot(t, gamma, label='gamma')
+    plt.xlabel('time (seconds)')
+    plt.grid(True)
+    plt.axis('tight')
+    plt.legend(loc='upper left')
+
+    plt.show()
 
 
-# Plot the frequency response for a few different orders.
-plt.figure(1)
-plt.clf()
-for order in [3, 6, 9]:
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    w, h = freqz(b, a, worN=100)
-    plt.plot((fs * 0.5 / np.pi) * w, abs(h), label="order = %d" % order)
-
-plt.plot([0, 0.5 * fs], [np.sqrt(0.5), np.sqrt(0.5)],
-         '--', label='sqrt(0.5)')
-plt.xlabel('Frequency (Hz)')
-plt.ylabel('Gain')
-plt.grid(True)
-plt.legend(loc='best')
-plt.show()
-
+order = 6
+fs = 200.0  # sample rate, Hz
+lowcut = 50.0  # desired cutoff frequency of the filter, Hz
+highcut = 0.01
 
 T = 1.3  # seconds
 n = int(T * fs)  # tot n_samples
-t = np.linspace(0, T, n, endpoint=False)
-data = get_dataset()
-x = data[0]
-plt.figure(2)
-plt.clf()
-plt.plot(t, x, label='Noisy signal')
+t = np.linspace(0, T, n)
 
-y = butter_bandpass_filter(x, lowcut, highcut, fs, order=6)
-plt.plot(t, y, label='Filtered signal')
+dataset = get_dataset()
+data = dataset[0]
+
+
+bandpasset = butter_bandpass_filter(data, 0.01, 50.0, fs, order=order)
+plt.subplot(2,1,1)
+plt.plot(t, bandpasset, label='bandpassed')
+plt.xlabel('time (seconds)')
+plt.grid(True)
+plt.axis('tight')
+plt.legend(loc='upper left')
+
+low = butter_lowpass_filter(data, 50.0, fs, order=order)
+low_and_high = butter_highpass_filter(low, 0.01, fs, order=order)
+plt.subplot(2,1,2)
+plt.plot(t, low_and_high, label='low_and_high')
 plt.xlabel('time (seconds)')
 plt.grid(True)
 plt.axis('tight')
 plt.legend(loc='upper left')
 plt.show()
-"""
-

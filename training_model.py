@@ -54,7 +54,7 @@ dataset = get_dataset(n_subjects=3, n_sessions=1)
 
 if __name__ == '__main__':
     n_subjects = 3
-    n_sessions = 5
+    n_sessions = 2
     dataset = get_dataset(n_subjects=n_subjects, n_sessions=n_sessions)
 
     C_F_V = 3

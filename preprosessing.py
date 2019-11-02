@@ -4,7 +4,6 @@ import numpy as np
 import statistics as stats
 import matplotlib.pyplot as plt
 import math
-from scipy.signal import butter, lfilter
 from scipy import signal
 from featuresExtraction import get_features
 from filters import butter_lowpass_filter, butter_highpass_filter
@@ -63,7 +62,7 @@ def get_dataset():
     cutoff_lowpass = 50.0
     ch_fs_instances = []
     ch_tags_instances = []
-    for subject in range(1, 4):  # 27
+    for subject in range(1, 2):  # 27
         for session in range(1, 2):  # 6
             s_s_chs, _header = get_subdataset(subject, session)
             _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
@@ -76,7 +75,7 @@ def get_dataset():
 
 dataset = get_dataset()
 
-"""
+
 for i, ii in enumerate(dataset['data']):
     color = "red" if dataset['target'][i] == "subject_1" else (
         "green" if dataset['target'][i] == "subject_2" else "blue")
@@ -85,4 +84,3 @@ plt.xlabel('Feature')
 plt.ylabel('Value')
 plt.grid(True)
 plt.show()
-"""
