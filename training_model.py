@@ -34,7 +34,9 @@ def get_subdataset(_S=1, Sess=1):
 
 def get_dataset(n_subjects=1, n_sessions=1):
     sr = 200
-    cutoff_lowpass = 50.0
+    lowcut = 0.01
+    highcut = 50.0
+    order = 6
     ch_fs_instances = []
     ch_tags_instances = []
     for subject in range(1, n_subjects + 1):  # 27
@@ -43,7 +45,7 @@ def get_dataset(n_subjects=1, n_sessions=1):
             _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
             instances = get_samples(_index, s_s_chs, sr)
             for f_instance in range(1, 2):  # len(instances) 60 instances
-                instance = preprocessing(cutoff_lowpass, f_instance, instances, sr)
+                instance = preprocessing(lowcut, highcut, order, f_instance, instances, sr)
                 ch_fs_instances.append(get_features(instance))
                 ch_tags_instances.append('subject_{0}'.format(subject))
     return {"data": ch_fs_instances, "target": ch_tags_instances}  # 2 (data, target), data:9, target: 9
@@ -53,8 +55,8 @@ dataset = get_dataset(n_subjects=3, n_sessions=1)
 
 
 if __name__ == '__main__':
-    n_subjects = 3
-    n_sessions = 2
+    n_subjects = 5
+    n_sessions = 1
     dataset = get_dataset(n_subjects=n_subjects, n_sessions=n_sessions)
 
     C_F_V = 3

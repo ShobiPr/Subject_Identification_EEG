@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import math
 from scipy import signal
 from featuresExtraction import get_features
-from filters import butter_lowpass_filter, butter_highpass_filter
+from filters import butter_bandpass_filter
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -49,17 +49,19 @@ def common_average_reference(instance):
     return np.array(CAR)
 
 
-def preprocessing(cutoff_lowpass, f_instance, instances, sr):
+def preprocessing(lowcut, highcut, f_instance, order, instances, sr):
     instance = np.array(instances[f_instance, :, 1:-1]).transpose()
     filtered_instance = []
     for i, channel in enumerate(instance):
-        filtered_instance.append(butter_lowpass_filter(channel, cutoff_lowpass, sr, order=6))
+        filtered_instance.append(butter_bandpass_filter(channel, lowcut, highcut, sr, order=order))
     return np.array(filtered_instance)
 
 
 def get_dataset():
     sr = 200
-    cutoff_lowpass = 50.0
+    lowcut = 0.01
+    highcut = 50.0
+    order = 6
     ch_fs_instances = []
     ch_tags_instances = []
     for subject in range(1, 2):  # 27
@@ -68,11 +70,13 @@ def get_dataset():
             _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
             instances = get_samples(_index, s_s_chs, sr)
             for f_instance in range(1, 2):  # len(instances) 60 instances
-                instance = preprocessing(cutoff_lowpass, f_instance, instances, sr)
+                instance = preprocessing(lowcut, highcut, order, f_instance, instances, sr)
                 ch_fs_instances.append(get_features(instance))
                 ch_tags_instances.append('subject_{0}'.format(subject))
     return {"data": ch_fs_instances, "target": ch_tags_instances}
 
+
+"""
 dataset = get_dataset()
 
 
@@ -84,3 +88,4 @@ plt.xlabel('Feature')
 plt.ylabel('Value')
 plt.grid(True)
 plt.show()
+"""

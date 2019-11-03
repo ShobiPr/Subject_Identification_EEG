@@ -5,6 +5,9 @@ from scipy.stats import kurtosis
 from scipy.stats import skew
 from scipy.signal import hilbert
 from pyhht import EMD
+from PyEMD import EEMD
+from math import *
+from decimal import Decimal
 from pyhht.utils import inst_freq
 import matplotlib.pyplot as plt
 
@@ -21,23 +24,9 @@ def instantaneous_energy(signal):
     data = hs = hilbert(signal)
     return np.real(np.log10((1 / float(len(data))) * sum(i ** 2 for i in data)))
 
-"""
-def get_imfs_with_eemd(signal):
-    try:
-        signal = np.array(signal)
-        components = EEMD().eemd(signal, max_imf=3)
-        imfs, res = components[1], components[-1]
-        if len(imfs) < 2:
-            print("imfs {} ++++++++++++++++++++++++++".format(len(imfs)))
-            raise ValueError("imfs{}".format(len(imfs)))
-        return imfs
-    except Exception as e:
-        print(e)
-        return []
-"""
 
 # Extract IMFs from EEG
-def get_imfs(signal):
+def get_imfs_emd(signal):
     try:
         signal = np.array(signal)
         decomposer_signal = EMD(signal, n_imfs=5)
@@ -47,6 +36,31 @@ def get_imfs(signal):
             raise ValueError("imfs {}".format(len(imfs)))
         # Return first IMF and residue
         #return imfs[1:3]
+        return imfs[1:3]
+    except Exception as e:
+        print(e)
+        return []
+
+
+
+def p_root(value, root):
+    root_value = 1 / float(root)
+    return round(Decimal(value) ** Decimal(root_value), 3)
+
+# x = signal
+# y = extracted IMF
+def get_Minkowski_distance(x, y, p_value):
+    return p_root(sum(pow(abs(a - b), p_value) for a, b in zip(x, y)), p_value)
+
+
+
+def get_imfs_eemd(signal):
+    try:
+        signal = np.array(signal)
+        imfs = EEMD().eemd(signal, max_imf=3)
+        if len(imfs) < 2:
+            print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
+            raise ValueError("imfs {}".format(len(imfs)))
         return imfs[1:3]
     except Exception as e:
         print(e)
@@ -143,8 +157,8 @@ def get_features(instance):
     for i, channel in enumerate(instance):
         if i < 5:
             # Compute the imf for ech channel
-            imfs = get_imfs(channel)
-            # imfs = get_imfs_with_eemd(channel)
+            imfs = get_imfs_emd(channel)
+            # imfs = get_imfs_eemd(channel)
 
             # Compute feature values for imfs corresponding to one channel and join
             # features_vector += get_statistics_values(imfs)

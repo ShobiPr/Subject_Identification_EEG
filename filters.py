@@ -228,6 +228,7 @@ def plot_frequency_bands():
     plt.show()
 
 
+"""
 order = 6
 fs = 200.0  # sample rate, Hz
 lowcut = 50.0  # desired cutoff frequency of the filter, Hz
@@ -258,3 +259,6 @@ plt.grid(True)
 plt.axis('tight')
 plt.legend(loc='upper left')
 plt.show()
+
+
+"""
