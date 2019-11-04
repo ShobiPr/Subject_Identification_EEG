@@ -9,7 +9,7 @@ from scipy.fftpack import fft
 from scipy import signal
 import warnings
 from preprosessing import preprocessing
-from featuresExtraction import get_features
+from features import get_features
 import warnings
 from scipy.signal import hilbert
 from pyhht import EMD

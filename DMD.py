@@ -3,7 +3,7 @@ import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
 import math
-from featuresExtraction import get_features
+from features import get_features
 from preprosessing import preprocessing
 import warnings
 

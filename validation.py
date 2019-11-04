@@ -3,7 +3,7 @@ from __future__ import division
 import numpy as np
 import pickle
 import math
-from featuresExtraction import get_features
+from features import get_features
 
 
 def get_samples(_index, s_s_chs, sr, _size=1.3):

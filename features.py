@@ -42,7 +42,6 @@ def get_imfs_emd(signal):
         return []
 
 
-
 def p_root(value, root):
     root_value = 1 / float(root)
     return round(Decimal(value) ** Decimal(root_value), 3)
@@ -51,7 +50,6 @@ def p_root(value, root):
 # y = extracted IMF
 def get_Minkowski_distance(x, y, p_value):
     return p_root(sum(pow(abs(a - b), p_value) for a, b in zip(x, y)), p_value)
-
 
 
 def get_imfs_eemd(signal):
@@ -95,6 +93,15 @@ def hfd(a, k_max=None):
         x.append([float(np.log(1 / k)), 1])
     (p, r1, r2, s) = np.linalg.lstsq(x, L, rcond=None)
     return p[0]
+
+
+
+def marginal_frequency(signal):
+    return np.sum(np.array(signal))
+
+
+def mean_instAmp(signal):
+    return stats.mean(np.array(signal))
 
 
 # def minkowski_distance():

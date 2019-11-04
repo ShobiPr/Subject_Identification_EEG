@@ -4,39 +4,10 @@ import matplotlib.pyplot as plt
 import math
 import numpy as np
 from scipy import signal
+from dataset import get_dataset
 import warnings
 
 warnings.filterwarnings("ignore")
-
-
-def get_samples(_index, s_s_chs, sr, _size=1.3):
-    instances = []
-    for _ind in _index:
-        instances.append(s_s_chs[_ind:int(math.ceil(_ind + (_size * sr)))][:])
-    return np.array(instances)
-
-
-def get_subdataset(_S=1, Sess=1):
-    _file = 'train/Data_S%02d_Sess%02d.csv' % (_S, Sess)
-    _f = open(_file).readlines()
-    channels = []
-    _header = []
-    for i, _rows in enumerate(_f):
-        if i > 0:
-            channels.append(eval(_rows))
-        else:
-            _header = _rows
-            _header = _header.split(',')
-    return np.array(channels), np.array(_header[1:-1])
-
-
-def get_dataset():
-    sr = 200
-    s_s_chs, _header = get_subdataset()
-    _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
-    instances = get_samples(_index, s_s_chs, sr)  # (60, 260, 59)
-    instance = np.array(instances[1, :, 1:-1]).transpose()  # (57, 260)
-    return instance
 
 
 def butter_lowpass_filter(data, cutoff, fs, order=5):
@@ -53,35 +24,6 @@ def butter_highpass_filter(data, cutoff, fs, order=5):
     b, a = signal.butter(order, normal_cutoff, btype='high', analog=False)
     y = signal.filtfilt(b, a, data)
     return y
-
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
-    y = signal.filtfilt(b, a, data)
-    return y
-
-
-def delta_wave(signal, fs):
-    return butter_bandpass_filter(signal, 0.5, 4.0, fs)
-
-
-def theta_wave(signal, fs):
-    return butter_bandpass_filter(signal, 4.0, 8.0, fs)
-
-
-def alpha_wave(signal, fs):
-    return butter_bandpass_filter(signal, 8.0, 12.0, fs)
-
-
-def beta_wave(signal, fs):
-    return butter_bandpass_filter(signal, 12.0, 30.0, fs)
-
-
-def gamma_wave(signal, fs):
-    return butter_highpass_filter(signal, 30.0, fs)
 
 
 # Plots
@@ -172,6 +114,67 @@ def plot_lowpass():
     plt.show()
 
 
+def low_and_high_vs_bandpass():
+    order = 6
+    fs = 200.0  # sample rate, Hz
+    lowcut = 50.0  # desired cutoff frequency of the filter, Hz
+    highcut = 0.01
+
+    T = 1.3  # seconds
+    n = int(T * fs)  # tot n_samples
+    t = np.linspace(0, T, n)
+
+    dataset = get_dataset()
+    data = dataset[0]
+
+    bandpasset = butter_bandpass_filter(data, 0.01, 50.0, fs, order=order)
+    plt.subplot(2, 1, 1)
+    plt.plot(t, bandpasset, label='bandpassed')
+    plt.xlabel('time (seconds)')
+    plt.grid(True)
+    plt.axis('tight')
+    plt.legend(loc='upper left')
+
+    low = butter_lowpass_filter(data, 50.0, fs, order=order)
+    low_and_high = butter_highpass_filter(low, 0.01, fs, order=order)
+    plt.subplot(2, 1, 2)
+    plt.plot(t, low_and_high, label='low_and_high')
+    plt.xlabel('time (seconds)')
+    plt.grid(True)
+    plt.axis('tight')
+    plt.legend(loc='upper left')
+    plt.show()
+
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band')
+    y = signal.filtfilt(b, a, data)
+    return y
+
+
+def delta_wave(signal, fs):
+    return butter_bandpass_filter(signal, 0.5, 4.0, fs)
+
+
+def theta_wave(signal, fs):
+    return butter_bandpass_filter(signal, 4.0, 8.0, fs)
+
+
+def alpha_wave(signal, fs):
+    return butter_bandpass_filter(signal, 8.0, 12.0, fs)
+
+
+def beta_wave(signal, fs):
+    return butter_bandpass_filter(signal, 12.0, 30.0, fs)
+
+
+def gamma_wave(signal, fs):
+    return butter_highpass_filter(signal, 30.0, fs)
+
+
 def plot_frequency_bands():
     order = 6
     fs = 200.0  # sample rate, Hz
@@ -228,37 +231,47 @@ def plot_frequency_bands():
     plt.show()
 
 
-"""
-order = 6
-fs = 200.0  # sample rate, Hz
-lowcut = 50.0  # desired cutoff frequency of the filter, Hz
-highcut = 0.01
+def plot_bandpass():
+    fs = 200.0  # sample rate, Hz
+    lowcut = 0.01  # desired cutoff frequency of the filter, Hz
+    highcut = 50.0
+    order = 6
+    T = 1.3  # seconds
+    n = int(T * fs)  # tot n_samples
+    t = np.linspace(0, T, n)
 
-T = 1.3  # seconds
-n = int(T * fs)  # tot n_samples
-t = np.linspace(0, T, n)
+    dataset = get_dataset()
 
-dataset = get_dataset()
-data = dataset[0]
-
-
-bandpasset = butter_bandpass_filter(data, 0.01, 50.0, fs, order=order)
-plt.subplot(2,1,1)
-plt.plot(t, bandpasset, label='bandpassed')
-plt.xlabel('time (seconds)')
-plt.grid(True)
-plt.axis('tight')
-plt.legend(loc='upper left')
-
-low = butter_lowpass_filter(data, 50.0, fs, order=order)
-low_and_high = butter_highpass_filter(low, 0.01, fs, order=order)
-plt.subplot(2,1,2)
-plt.plot(t, low_and_high, label='low_and_high')
-plt.xlabel('time (seconds)')
-plt.grid(True)
-plt.axis('tight')
-plt.legend(loc='upper left')
-plt.show()
+    for i in range(0,5):
+        y_bandpass = butter_bandpass_filter(dataset[i], lowcut, highcut, fs, order=order)
+        plt.subplot(5, 1, i+1)
+        plt.plot(t, dataset[i], 'b-', label='data')
+        plt.plot(t, y_bandpass, 'g-', linewidth=2, label='filtered data')
+        plt.xlabel('Time [sec]')
+        plt.grid()
+        plt.legend()
+    plt.show()
 
 
-"""
+def frequency_bands(signal, fs):
+    freq_band = [
+        delta_wave(signal, fs),
+        theta_wave(signal, fs),
+        alpha_wave(signal, fs),
+        beta_wave(signal, fs),
+        gamma_wave(signal, fs)
+    ]
+    return freq_band
+
+
+# (5, [5 (delta, theta, alpha, beta, gamma), 260])
+def plot_freq_band(freq_band):
+    name_wave = ['delta', 'theta', 'alpha', 'beta', 'gamma']
+    for channel, waves in enumerate(freq_band):
+        for i in range(len(waves)):
+            plt.subplot(len(waves), 1, i + 1)
+            plt.plot(waves[i])
+            plt.ylabel("{}".format(name_wave[i]))
+            # plt.ylabel("wave %i" % (i + 1))
+            plt.locator_params(axis='y', nbins=5)
+        plt.show()

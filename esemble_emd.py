@@ -2,56 +2,78 @@ from PyEMD import EEMD, Visualisation
 import numpy as np
 import math
 import matplotlib.pyplot as plt
-from preprosessing import preprocessing
+from dataset import get_dataset
 
-def get_samples(_index, s_s_chs, sr, _size=1.3):
-    instances = []
-    for _ind in _index:
-        instances.append(s_s_chs[_ind:int(math.ceil(_ind + (_size * sr)))][:])
-    return np.array(instances)
-
-
-def get_subdataset(_S=1, Sess=1):
-    _file = 'train/Data_S%02d_Sess%02d.csv' % (_S, Sess)
-    _f = open(_file).readlines()
-    channels = []
-    _header = []
-    for i, _rows in enumerate(_f):
-        if i > 0:
-            channels.append(eval(_rows))
-        else:
-            _header = _rows
-            _header = _header.split(',')
-    return np.array(channels), np.array(_header[1:-1])
-
-"""
-sr = 200
-lowcut = 0.01
-highcut = 50.0
-order = 6
-s_s_chs, _header = get_subdataset()
-_index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
-instances = get_samples(_index, s_s_chs, sr)
-instance = preprocessing(lowcut, highcut, order, 1, instances, sr)
-
-t = np.linspace(0, 1.3, 260)
-s = instance[1]
-components = EEMD()
-eIMFs = components.eemd(s, max_imf=2)
-IMF = eIMFs[1]
-"""
 
 def get_imfs_eemd(signal):
-    try:
-        signal = np.array(signal)
-        imfs = EEMD().eemd(signal, max_imf=3)
-        if len(imfs) < 2:
-            print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
-            raise ValueError("imfs {}".format(len(imfs)))
-        return imfs[1:3]
-    except Exception as e:
-        print(e)
-        return []
+    signal = np.array(signal)
+    components = EEMD()(signal)
+    imfs, res = components[:-1], components[-1]
+    return imfs[1:4]
+
+
+def plot_imfs(freq_bands, ch_imfs):
+    name_band = ['delta', 'theta', 'alpha', 'beta', 'gamma']
+    for channel, bands in enumerate(ch_imfs):
+        for band, imfs in enumerate(bands):
+            nIMFs = imfs.shape[0]
+            # band_signal = freq_bands[channel][band]
+            plt.subplot(nIMFs + 1,1,1)
+            plt.plot(freq_bands[channel][band])
+            plt.title(name_band[band])
+
+            for n in range(nIMFs):
+                plt.subplot(nIMFs + 1, 1, n + 2)
+                plt.plot(imfs[n])
+                plt.ylabel("IMF %i" % (n + 1))
+                plt.locator_params(axis='y', nbins=5)
+            plt.show()
+
+
+
+"""
+dataset = get_dataset()
+signal = dataset[0]
+modes = get_imfs_eemd(signal)  # (3, 260) aka. (3 x imf, samples)
+"""
+
+"""
+    nIMFs = imfs.shape[0]
+    eIMFSshape = eIMFS.shape[0]
+
+    plt.subplot(eIMFSshape + 1, 1, 1)
+    plt.plot(signal, 'r')
+
+    for n in range(eIMFSshape):
+        plt.subplot(eIMFSshape + 1, 1, n + 2)
+        plt.plot(eIMFS[n], 'g')
+        plt.ylabel("eIMF %i" % (n + 1))
+        plt.locator_params(axis='y', nbins=5)
+
+    plt.xlabel("Time [s]")
+    plt.tight_layout()
+    plt.show()
+"""
+
+"""
+    # Plot results
+    plt.figure(figsize=(12, 9))
+    plt.subplot(4, 1, 1)
+    plt.plot(signal, 'r')
+
+    for n in range(1, 4):
+        plt.subplot(4, 1, n + 1)
+        plt.plot(imfs[n], 'g')
+        plt.ylabel("eIMF %i" % (n + 1))
+        plt.locator_params(axis='y', nbins=5)
+
+    plt.xlabel("Time [s]")
+    plt.tight_layout()
+    plt.savefig('eemd_example', dpi=120)
+    plt.show()
+"""
+
+
 
 
 

@@ -5,7 +5,7 @@ import statistics as stats
 import matplotlib.pyplot as plt
 import math
 from scipy import signal
-from featuresExtraction import get_features
+from features import get_features
 from filters import butter_bandpass_filter
 import warnings
 

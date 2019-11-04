@@ -4,7 +4,7 @@ import pickle
 import math
 import matplotlib.pyplot as plt
 from classefiers import selector
-from featuresExtraction import get_features
+from features import get_features
 from preprosessing import preprocessing
 import warnings
 
