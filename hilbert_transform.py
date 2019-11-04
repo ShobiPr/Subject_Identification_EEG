@@ -13,7 +13,6 @@ def hilbert_transform(ch_imfs, fs):
             instAmp.append(np.abs(hs))  # Calculate amplitude
             omega_s = np.unwrap(np.angle(hs))  # Unwrap phase
             instFreq.append(np.diff(omega_s) / (2 * np.pi / fs))  # Calculate instantaneous frequency
-            print("instFreq: ", np.shape(instFreq))
         ch_instFreq.append(instFreq)
         ch_instAmp.append(instAmp)
     return ch_instFreq, ch_instAmp
