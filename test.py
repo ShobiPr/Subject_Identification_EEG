@@ -3,6 +3,7 @@ from dataset import get_dataset
 from filters import frequency_bands, plot_freq_band
 import matplotlib.pyplot as plt
 from hilbert_transform import hilbert_transform
+from features import get_Features
 from PyEMD import EEMD
 import numpy as np
 
@@ -37,7 +38,9 @@ for channel, bands in enumerate(freq_bands):  # bands: (5, 260)
 
 # --------------------------------------------
 
-ch_instFreq, ch_instAmp = hilbert_transform(ch_imfs, sr)
+get_Features(ch_imfs, sr)
 
-print("instFreq: ", np.shape(ch_instFreq))
-print("instAmp: ", np.shape(ch_instAmp))
+# ch_instFreq, ch_instAmp = hilbert_transform(ch_imfs, sr)
+
+# print("instFreq: ", np.shape(ch_instFreq))
+# print("instAmp: ", np.shape(ch_instAmp))

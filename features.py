@@ -8,6 +8,7 @@ from pyhht import EMD
 from PyEMD import EEMD
 from math import *
 from decimal import Decimal
+from hilbert_transform import hilbert_transform
 from pyhht.utils import inst_freq
 import matplotlib.pyplot as plt
 
@@ -101,7 +102,7 @@ def marginal_frequency(signal):
 
 
 def mean_instAmp(signal):
-    return stats.mean(np.array(signal))
+    return (np.sum(signal)/len(signal))
 
 
 # def minkowski_distance():
@@ -172,3 +173,17 @@ def get_features(instance):
             # features_vector += get_energy_values(imfs)
             features_vector += get_values_f(imfs)
     return features_vector
+
+
+def get_Features(ch_imfs, sr):
+
+    for channel, bands in enumerate(ch_imfs):
+        ch_instFreq, ch_instAmp = hilbert_transform(ch_imfs, sr)  # (5, 3, 260)
+        marginal_freq = []
+        ampMean = []
+        for band, dim in enumerate(ch_instFreq):  # dim:(3, 250)
+            marginal_freq = (marginal_frequency([dim[i] for i in range(len(dim))]))
+
+        # ampMean = (mean_instAmp([imfs[i] for i in range(len(imfs))]))
+        print("marginal_freq: ", np.shape(marginal_freq))
+        # print("ampMean: ", np.shape(ampMean))
