@@ -9,6 +9,7 @@ from PyEMD import EEMD
 from math import *
 from decimal import Decimal
 from hilbert_transform import hilbert_transform
+from esemble_emd import get_imfs
 from pyhht.utils import inst_freq
 import matplotlib.pyplot as plt
 
@@ -176,14 +177,57 @@ def get_features(instance):
 
 
 def get_Features(ch_imfs, sr):
+    feature_vector = []
 
+    for channel, bands in enumerate(ch_imfs):  # bands:(5, 3, 260)
+        bands_instFreq, bands_instAmp = hilbert_transform(bands, sr)  # bands_instFreq:  (5, 3, 259)
+
+        feat_vec = []
+        bands_marginal_freq = []
+        bands_ampMean = []
+
+        for band, modes in enumerate(bands_instFreq):
+
+            marginal_freq = []
+            ampMean = []
+
+            for i in range(len(modes)):
+                feat_vec += [
+                    marginal_frequency(modes[i]),
+                    mean_instAmp(bands_instAmp[band][i])
+                ]
+
+            # bands_marginal_freq += marginal_freq
+            # bands_ampMean += ampMean
+
+        #feat_vec += [bands_marginal_freq, bands_ampMean]
+        # feat_vec.append(bands_marginal_freq)  # ch_margin_freq:  (1, 15)
+        # feat_vec.append(bands_ampMean)
+
+        #feature_vector.append(feat_vec)
+        feature_vector += feat_vec
+    return feature_vector
+
+
+def f_values_prodo(_vector, fs):
+    feat = []
+    band_instFreq, band_instAmp = hilbert_transform(_vector, fs)
+    for i in range(len(band_instFreq)):
+        feat += [
+            marginal_frequency(band_instFreq[i]),
+            mean_instAmp(band_instAmp[i])
+        ]
+    return feat
+
+
+# ch_freq_bands: (2, 5, 260)
+# feature_vector:  (2, 2, 15)
+def get_Features_prodo(ch_freq_bands, fs):
+    feature_vector = []
+    # (2, 5, 3, 260)
+    ch_imfs = get_imfs(ch_freq_bands)
     for channel, bands in enumerate(ch_imfs):
-        ch_instFreq, ch_instAmp = hilbert_transform(ch_imfs, sr)  # (5, 3, 260)
-        marginal_freq = []
-        ampMean = []
-        for band, dim in enumerate(ch_instFreq):  # dim:(3, 250)
-            marginal_freq = (marginal_frequency([dim[i] for i in range(len(dim))]))
+        for band, modes in enumerate(bands):
+            feature_vector += f_values_prodo(modes, fs)
+    return feature_vector
 
-        # ampMean = (mean_instAmp([imfs[i] for i in range(len(imfs))]))
-        print("marginal_freq: ", np.shape(marginal_freq))
-        # print("ampMean: ", np.shape(ampMean))

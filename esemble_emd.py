@@ -12,6 +12,16 @@ def get_imfs_eemd(signal):
     return imfs[1:4]
 
 
+def get_imfs(ch_freq_bands):
+    ch_imfs = []
+    for channel, bands in enumerate(ch_freq_bands):
+        eIMFs = []
+        for band, signal in enumerate(bands):
+            eIMFs.append(get_imfs_eemd(signal))
+        ch_imfs.append(eIMFs)
+    return ch_imfs
+
+
 def plot_imfs(freq_bands, ch_imfs):
     name_band = ['delta', 'theta', 'alpha', 'beta', 'gamma']
     for channel, bands in enumerate(ch_imfs):
@@ -28,52 +38,6 @@ def plot_imfs(freq_bands, ch_imfs):
                 plt.ylabel("IMF %i" % (n + 1))
                 plt.locator_params(axis='y', nbins=5)
             plt.show()
-
-
-
-"""
-dataset = get_dataset()
-signal = dataset[0]
-modes = get_imfs_eemd(signal)  # (3, 260) aka. (3 x imf, samples)
-"""
-
-"""
-    nIMFs = imfs.shape[0]
-    eIMFSshape = eIMFS.shape[0]
-
-    plt.subplot(eIMFSshape + 1, 1, 1)
-    plt.plot(signal, 'r')
-
-    for n in range(eIMFSshape):
-        plt.subplot(eIMFSshape + 1, 1, n + 2)
-        plt.plot(eIMFS[n], 'g')
-        plt.ylabel("eIMF %i" % (n + 1))
-        plt.locator_params(axis='y', nbins=5)
-
-    plt.xlabel("Time [s]")
-    plt.tight_layout()
-    plt.show()
-"""
-
-"""
-    # Plot results
-    plt.figure(figsize=(12, 9))
-    plt.subplot(4, 1, 1)
-    plt.plot(signal, 'r')
-
-    for n in range(1, 4):
-        plt.subplot(4, 1, n + 1)
-        plt.plot(imfs[n], 'g')
-        plt.ylabel("eIMF %i" % (n + 1))
-        plt.locator_params(axis='y', nbins=5)
-
-    plt.xlabel("Time [s]")
-    plt.tight_layout()
-    plt.savefig('eemd_example', dpi=120)
-    plt.show()
-"""
-
-
 
 
 

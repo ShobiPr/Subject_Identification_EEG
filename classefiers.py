@@ -125,7 +125,7 @@ def knn(dataTraining, targetTraining):
     return {"classifier": (str(bestNneighbor) + "-NN (KNN)"), "accuracy": str(maxScore), "clf": bestClf}
 
 
-def SVM(dataTraining, targetTraining):
+def SVM(dataTraining, targetTraining, C_F_V):
     '''
     Creating SVM classifier
     '''
@@ -164,7 +164,7 @@ def selector(dataTraining, targetTraining):
     bestClf = clfArray[pos]
     return {"model": bestClf, "classifier": bClassifier, "accuracy": maxAccuracy}
 
-
+"""
 dataset = get_dataset()
 dataTraining = dataset['data']
 targetTraining = dataset['target']
@@ -177,3 +177,4 @@ CLASSIFIERS = [lambda l_dt, l_tt: random_forest(l_dt, l_tt),
 
 clf = selector(dataTraining, targetTraining)
 print("Best classifier {0} with accuracy {1}".format(clf['classifier'], clf['accuracy']))
+"""

@@ -275,3 +275,11 @@ def plot_freq_band(freq_band):
             # plt.ylabel("wave %i" % (i + 1))
             plt.locator_params(axis='y', nbins=5)
         plt.show()
+
+
+def get_frequency_bands(instance, n_channel, fs):  # (56, 260)
+    ch_freq_bands = []
+    for channel, samples in enumerate(instance):
+        if channel < n_channel:
+            ch_freq_bands.append(frequency_bands(samples, fs))
+    return ch_freq_bands
