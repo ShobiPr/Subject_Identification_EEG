@@ -5,21 +5,14 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import cross_val_score
-from features import get_features
-import math
-import numpy as np
+
+import matplotlib.pyplot as plt
+from emperical_mode_decompositoin import get_dataset_EMD
+from hilbert_huang_model import get_dataset_HHT
 import warnings
 
 warnings.filterwarnings("ignore")
 
-
-"""
-CLASSIFIERS = [lambda l_dt, l_tt: random_forest(l_dt, l_tt),
-               lambda l_dt, l_tt: decision_tree(l_dt, l_tt),
-               lambda l_dt, l_tt: knn(l_dt, l_tt),
-               lambda l_dt, l_tt: SVM(l_dt, l_tt),
-               lambda l_dt, l_tt: naive_bayes(l_dt, l_tt)]
-"""
 
 def decision_tree(dataTraining, targetTraining):
     '''
@@ -39,43 +32,6 @@ def naive_bayes(dataTraining, targetTraining):
     scores = cross_val_score(clf, dataTraining, targetTraining, cv=C_F_V)
     accuracy = scores.mean()
     return {"classifier": "NaiveBayes", "accuracy": str(accuracy), "clf": clf}
-
-
-def get_samples(_index, s_s_chs, sr, _size=1.3):
-    instances = []
-    for _ind in _index:
-        instances.append(s_s_chs[_ind:int(math.ceil(_ind + (_size * sr)))][:])
-    return np.array(instances)
-
-
-def get_subdataset(_S=1, Sess=1):
-    _file = 'train/Data_S%02d_Sess%02d.csv' % (_S, Sess)
-    _f = open(_file).readlines()
-    channels = []
-    _header = []
-    for i, _rows in enumerate(_f):
-        if i > 0:
-            channels.append(eval(_rows))
-        else:
-            _header = _rows
-            _header = _header.split(',')
-    return np.array(channels), np.array(_header[1:-1])
-
-
-def get_dataset():
-    sr = 200
-    ch_fs_instances = []
-    ch_tags_instances = []
-    for subject in range(1, 4):  # 27
-        for session in range(1, 2):  # 6
-            s_s_chs, _header = get_subdataset(subject, session)
-            _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
-            instances = get_samples(_index, s_s_chs, sr)
-            for f_instance in range(1, 30):  # len(instances) 60 instances
-                instance = np.array(instances[f_instance, :, 1:-1]).transpose()
-                ch_fs_instances.append(get_features(instance))
-                ch_tags_instances.append('subject_{0}'.format(subject))
-    return {"data": ch_fs_instances, "target": ch_tags_instances}  # 2 (data, target), data:9, target: 9
 
 
 def random_forest(dataTraining, targetTraining):
@@ -125,7 +81,7 @@ def knn(dataTraining, targetTraining):
     return {"classifier": (str(bestNneighbor) + "-NN (KNN)"), "accuracy": str(maxScore), "clf": bestClf}
 
 
-def SVM(dataTraining, targetTraining, C_F_V):
+def SVM(dataTraining, targetTraining):
     '''
     Creating SVM classifier
     '''
@@ -164,17 +120,20 @@ def selector(dataTraining, targetTraining):
     bestClf = clfArray[pos]
     return {"model": bestClf, "classifier": bClassifier, "accuracy": maxAccuracy}
 
-"""
-dataset = get_dataset()
+
+dataset = get_dataset_HHT()
 dataTraining = dataset['data']
 targetTraining = dataset['target']
 
-C_F_V = 3
+# C_F_V = 10
+C_F_V = 2
 RANDOM_STATE = 0
 CLASSIFIERS = [lambda l_dt, l_tt: random_forest(l_dt, l_tt),
+               lambda l_dt, l_tt: decision_tree(l_dt, l_tt),
                lambda l_dt, l_tt: knn(l_dt, l_tt),
-               lambda l_dt, l_tt: SVM(l_dt, l_tt)]
+               lambda l_dt, l_tt: SVM(l_dt, l_tt),
+               lambda l_dt, l_tt: naive_bayes(l_dt, l_tt)]
 
 clf = selector(dataTraining, targetTraining)
 print("Best classifier {0} with accuracy {1}".format(clf['classifier'], clf['accuracy']))
-"""
+

@@ -22,22 +22,23 @@ def get_imfs(ch_freq_bands):
     return ch_imfs
 
 
-def plot_imfs(freq_bands, ch_imfs):
+def plot_imfs(imfs, band, i):
     name_band = ['delta', 'theta', 'alpha', 'beta', 'gamma']
-    for channel, bands in enumerate(ch_imfs):
-        for band, imfs in enumerate(bands):
-            nIMFs = imfs.shape[0]
-            # band_signal = freq_bands[channel][band]
-            plt.subplot(nIMFs + 1,1,1)
-            plt.plot(freq_bands[channel][band])
-            plt.title(name_band[band])
 
-            for n in range(nIMFs):
-                plt.subplot(nIMFs + 1, 1, n + 2)
-                plt.plot(imfs[n])
-                plt.ylabel("IMF %i" % (n + 1))
-                plt.locator_params(axis='y', nbins=5)
-            plt.show()
+    nIMFs = imfs.shape[0]
+    # band_signal = freq_bands[channel][band]
+    plt.subplot(nIMFs + 1,1,1)
+    plt.plot(band)
+    plt.title(name_band[i])
+
+    for n in range(nIMFs):
+        plt.subplot(nIMFs + 1, 1, n + 2)
+        plt.plot(imfs[n])
+        plt.ylabel("IMF %i" % (n + 1))
+        plt.locator_params(axis='y', nbins=5)
+    plt.show()
+
+
 
 
 

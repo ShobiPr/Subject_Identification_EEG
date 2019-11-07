@@ -265,7 +265,7 @@ def frequency_bands(signal, fs):
 
 
 # (5, [5 (delta, theta, alpha, beta, gamma), 260])
-def plot_freq_band(freq_band):
+def plot_freq_bands(freq_band):
     name_wave = ['delta', 'theta', 'alpha', 'beta', 'gamma']
     for channel, waves in enumerate(freq_band):
         for i in range(len(waves)):
@@ -277,9 +277,10 @@ def plot_freq_band(freq_band):
         plt.show()
 
 
-def get_frequency_bands(instance, n_channel, fs):  # (56, 260)
+def get_frequency_bands(instances, f_instance, ch_start, ch_stop, fs):  # (56, 260)
+    ins = np.array(instances[f_instance, :, 1:-1]).transpose()
     ch_freq_bands = []
-    for channel, samples in enumerate(instance):
-        if channel < n_channel:
+    for channel, samples in enumerate(ins):
+        if ch_start <= channel <= ch_stop:
             ch_freq_bands.append(frequency_bands(samples, fs))
     return ch_freq_bands

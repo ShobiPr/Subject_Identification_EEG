@@ -2,10 +2,8 @@
 from __future__ import division
 import numpy as np
 import statistics as stats
-import matplotlib.pyplot as plt
 import math
 from scipy import signal
-from features import get_features
 from filters import butter_bandpass_filter
 import warnings
 
@@ -55,37 +53,3 @@ def preprocessing(lowcut, highcut, f_instance, order, instances, sr):
     for i, channel in enumerate(instance):
         filtered_instance.append(butter_bandpass_filter(channel, lowcut, highcut, sr, order=order))
     return np.array(filtered_instance)
-
-
-def get_dataset():
-    sr = 200
-    lowcut = 0.01
-    highcut = 50.0
-    order = 6
-    ch_fs_instances = []
-    ch_tags_instances = []
-    for subject in range(1, 2):  # 27
-        for session in range(1, 2):  # 6
-            s_s_chs, _header = get_subdataset(subject, session)
-            _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
-            instances = get_samples(_index, s_s_chs, sr)
-            for f_instance in range(1, 2):  # len(instances) 60 instances
-                instance = preprocessing(lowcut, highcut, order, f_instance, instances, sr)
-                ch_fs_instances.append(get_features(instance))
-                ch_tags_instances.append('subject_{0}'.format(subject))
-    return {"data": ch_fs_instances, "target": ch_tags_instances}
-
-
-"""
-dataset = get_dataset()
-
-
-for i, ii in enumerate(dataset['data']):
-    color = "red" if dataset['target'][i] == "subject_1" else (
-        "green" if dataset['target'][i] == "subject_2" else "blue")
-    plt.plot(ii, color)
-plt.xlabel('Feature')
-plt.ylabel('Value')
-plt.grid(True)
-plt.show()
-"""
