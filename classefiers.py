@@ -126,7 +126,7 @@ dataTraining = dataset['data']
 targetTraining = dataset['target']
 
 # C_F_V = 10
-C_F_V = 2
+C_F_V = 3
 RANDOM_STATE = 0
 CLASSIFIERS = [lambda l_dt, l_tt: random_forest(l_dt, l_tt),
                lambda l_dt, l_tt: decision_tree(l_dt, l_tt),

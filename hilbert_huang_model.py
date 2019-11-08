@@ -29,17 +29,15 @@ def get_dataset_HHT():
     ch_stop = 12
     ch_fs_instances = []
     ch_tags_instances = []
-    for subject in range(1, 3):  # 3
+    for subject in range(1, 2):  # 3
         for session in range(1, 2):  # 1
             s_s_chs = get_subdataset(subject, session)
             _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
             instances = get_samples(_index, s_s_chs, sr)
             for f_instance in range(1, 2):  # len(instances) 60 instances
                 fb = get_frequency_bands(instances, f_instance, ch_start, ch_stop, sr)
-                ch_fs_instances.append(get_features_eemd(fb, sr))
-                ch_tags_instances.append('subject_{0}'.format(subject))
-                #return ch_fs_instances
-                return {"data": ch_fs_instances, "target": ch_tags_instances}
+                plot_freq_bands(fb)
+                # ch_fs_instances.append(get_features_eemd(fb, sr))
+                # ch_tags_instances.append('subject_{0}'.format(subject))
+                # return {"data": ch_fs_instances, "target": ch_tags_instances}
 
-
-a = get_dataset_HHT()
