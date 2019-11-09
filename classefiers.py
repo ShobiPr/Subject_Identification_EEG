@@ -6,6 +6,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import cross_val_score
 
+import pickle
 import matplotlib.pyplot as plt
 from emperical_mode_decompositoin import get_dataset_EMD
 from hilbert_huang_model import get_dataset_HHT
@@ -125,11 +126,7 @@ def selector(dataTraining, targetTraining):
     return {"model": bestClf, "classifier": bClassifier, "accuracy": maxAccuracy}
 
 
-dataset = get_dataset_EMD()
-dataTraining = dataset['data']
-targetTraining = dataset['target']
-
-C_F_V = 3
+C_F_V = 10
 #C_F_V = 3
 RANDOM_STATE = 0
 CLASSIFIERS = [lambda l_dt, l_tt: random_forest(l_dt, l_tt),
@@ -138,6 +135,17 @@ CLASSIFIERS = [lambda l_dt, l_tt: random_forest(l_dt, l_tt),
                lambda l_dt, l_tt: SVM(l_dt, l_tt),
                lambda l_dt, l_tt: naive_bayes(l_dt, l_tt)]
 
-clf = selector(dataTraining, targetTraining)
-print("Best classifier {0} with accuracy {1}".format(clf['classifier'], clf['accuracy']))
+
+dataset = get_dataset_EMD()
+
+dataTraining = dataset['data']
+targetTraining = dataset['target']
+result = selector(dataTraining, targetTraining)
+
+print("Best classifier {0} with accuracy {1}".format(result['classifier'], result['accuracy']))
+
+# saving the model
+model_name = 'EMD_P300_.sav'
+pickle.dump(result["model"], open(model_name, 'wb'))
+
 
