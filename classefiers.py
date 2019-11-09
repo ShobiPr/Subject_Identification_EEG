@@ -59,6 +59,7 @@ def knn(dataTraining, targetTraining):
     Creating KNN classifier
     '''
     NEIGHBORS = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    # NEIGHBORS = [1, 2, 3]
     clfArray = []
     meanScore = []
     for neighbor in NEIGHBORS:
@@ -71,13 +72,16 @@ def knn(dataTraining, targetTraining):
     bestNneighbor = NEIGHBORS[position]
     bestClf = clfArray[position]
     # Try for bagging
-    clfBag = BaggingClassifier(KNeighborsClassifier(n_neighbors=bestNneighbor).fit(dataTraining,
-                                                                                   targetTraining))
-    scoresBag = cross_val_score(clfBag, dataTraining, targetTraining, cv=C_F_V)
-    scoreBag = scoresBag.mean()
+
+    #scoresBag = cross_val_score(clfBag, dataTraining, targetTraining, cv=C_F_V)
+    #scoreBag = scoresBag.mean()
+    """
     if scoreBag >= maxScore:
         maxScore = scoreBag
         bestClf = clfBag
+        #clfBag = BaggingClassifier(KNeighborsClassifier(n_neighbors=bestNneighbor).fit(dataTraining,
+                                                                                      targetTraining))
+    """
     return {"classifier": (str(bestNneighbor) + "-NN (KNN)"), "accuracy": str(maxScore), "clf": bestClf}
 
 
@@ -121,12 +125,12 @@ def selector(dataTraining, targetTraining):
     return {"model": bestClf, "classifier": bClassifier, "accuracy": maxAccuracy}
 
 
-dataset = get_dataset_HHT()
+dataset = get_dataset_EMD()
 dataTraining = dataset['data']
 targetTraining = dataset['target']
 
-# C_F_V = 10
 C_F_V = 3
+#C_F_V = 3
 RANDOM_STATE = 0
 CLASSIFIERS = [lambda l_dt, l_tt: random_forest(l_dt, l_tt),
                lambda l_dt, l_tt: decision_tree(l_dt, l_tt),

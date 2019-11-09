@@ -4,7 +4,7 @@ import numpy as np
 import statistics as stats
 import math
 from scipy import signal
-from filters import butter_bandpass_filter
+from filters import butter_bandpass_filter, butter_lowpass_filter
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -47,9 +47,10 @@ def common_average_reference(instance):
     return np.array(CAR)
 
 
-def preprocessing(lowcut, highcut, f_instance, order, instances, sr):
+def preprocessing(cutoff, f_instance, instances, order, fs):
     instance = np.array(instances[f_instance, :, 1:-1]).transpose()
     filtered_instance = []
     for i, channel in enumerate(instance):
-        filtered_instance.append(butter_bandpass_filter(channel, lowcut, highcut, sr, order=order))
+        # filtered_instance.append(butter_bandpass_filter(channel, lowcut, highcut, sr, order=order))
+        filtered_instance.append(butter_lowpass_filter(channel, cutoff, fs, order=order))
     return np.array(filtered_instance)
