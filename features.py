@@ -159,8 +159,8 @@ def get_features_emd(instance, fs):
     features_vector = []
     for i, channel in enumerate(instance):
         imfs = get_imfs_emd(channel)
-        #features_vector += get_statistics_values(imfs)
-        features_vector += get_energy_values(imfs)
+        features_vector += get_statistics_values(imfs)
+        # features_vector += get_energy_values(imfs)
         # features_vector += get_HHT(imfs,fs)
         # features_vector += get_values_f(imfs)
     return features_vector

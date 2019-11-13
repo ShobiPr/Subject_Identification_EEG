@@ -35,18 +35,18 @@ def get_dataset_EMD():
     order = 6
     ch_fs_instances = []
     ch_tags_instances = []
-    for subject in range(1, 6):  # 5
-        for session in range(1, 5):  # 4
+    for subject in range(1, 3):  # 26
+        for session in range(1, 2):  # 4
             s_s_chs = get_subdataset(subject, session)
             _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
             instances = get_samples(_index, s_s_chs, sr)
-            for f_instance in range(1, 11):  # 10 instances
+            for f_instance in range(0, 3):  # 20 instances
                 instance = preprocessing(cutoff, f_instance, instances, order, sr)
 
                 #ins14 = instance[[4, 5, 7, 9, 13, 15, 17, 23, 25, 33, 43, 51, 55, 56], :]
-                ins8 = instance[[7, 15, 25, 33, 43, 51, 55, 56], :]
+                #ins8 = instance[[7, 15, 25, 33, 43, 51, 55, 56], :]
 
-                ch_fs_instances.append(get_features_emd(ins8, sr))
+                ch_fs_instances.append(get_features_emd(instance, sr))
                 ch_tags_instances.append('subject_{0}'.format(subject))
     return {"data": ch_fs_instances, "target": ch_tags_instances}
 
