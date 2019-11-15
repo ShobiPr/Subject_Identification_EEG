@@ -7,13 +7,10 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import cross_val_score
 
 import logging
-import pickle
-import logging
-from emperical_mode_decompositoin import get_dataset_EMD
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='test.log',
+logging.basicConfig(filename='EMD_P300_ch57_stat.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -63,7 +60,7 @@ def knn(dataTraining, targetTraining):
     Creating KNN classifier
     '''
     NEIGHBORS = [2, 3, 4, 5, 6, 7, 8, 9, 10]
-    #NEIGHBORS = [1, 2, 3]
+    # NEIGHBORS = [1, 2, 3]
     clfArray = []
     meanScore = []
     for neighbor in NEIGHBORS:
@@ -129,24 +126,10 @@ def selector(dataTraining, targetTraining):
     return {"model": bestClf, "classifier": bClassifier, "accuracy": maxAccuracy}
 
 
-C_F_V = 2
-# C_F_V = 3
+C_F_V = 10
 RANDOM_STATE = 0
 CLASSIFIERS = [lambda l_dt, l_tt: random_forest(l_dt, l_tt),
                lambda l_dt, l_tt: decision_tree(l_dt, l_tt),
                lambda l_dt, l_tt: knn(l_dt, l_tt),
                lambda l_dt, l_tt: SVM(l_dt, l_tt),
                lambda l_dt, l_tt: naive_bayes(l_dt, l_tt)]
-
-dataset = get_dataset_EMD()
-
-dataTraining = dataset['data']
-targetTraining = dataset['target']
-result = selector(dataTraining, targetTraining)
-
-logging.info("Best classifier {0} with accuracy {1}".format(result['classifier'], result['accuracy']))
-
-
-# saving the model
-model_name = 'test.sav'
-pickle.dump(result["model"], open(model_name, 'wb'))

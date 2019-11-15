@@ -23,19 +23,14 @@ def get_imfs_emd(signal):
 
 
 def get_imfs_eemd(signal):
-    try:
-        signal = np.array(signal)
-        components = EEMD()(signal)
-        imfs, res = components[:-1], components[-1]
-        if len(imfs) < 2:
-            print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
-            raise ValueError("imfs {}".format(len(imfs)))
-        return imfs[1:3]
-    except Exception as e:
-        print(e)
-        return []
+    signal = np.array(signal)
+    components = EEMD()(signal)
+    imfs, res = components[:-1], components[-1]
+    return imfs[1:4]
+
 
 # ------------------------------------------------------------------
+# HHT FEATURES
 
 def instFreq(signal, fs):
     hs = hilbert(signal)
@@ -57,6 +52,7 @@ def mean_instAmp(signal):
     return np.sum(i_a) / len(i_a)
 
 # ------------------------------------------------------------------
+# ENERGY FEATURES
 
 def teager_energy(data):
     sum_values = sum(abs(data[x] ** 2) if x == 0
@@ -98,20 +94,22 @@ def hfd(a, k_max=None):
     return p[0]
 
 
+# ------------------------------------------------------------------
+
 def get_statistics_values(imfs):
     feat = []
     # For each imf compute 9 values and return it in a single vector. (5 values in this example)
     # Mean, maximum, minimum, standard deviation, variance, kurtosis, skewness, sum and median
     for ii, imf in enumerate(imfs):
         feat += [
-            # stats.mean(imf),
+            # stats.mean(imf), #
             np.var(imf),
             np.std(imf),
             kurtosis(imf),
-            skew(imf),
+            # skew(imf), #
             np.max(imf),
-            # np.min(imf),
-            # stats.median(imf)
+            np.min(imf),
+            # stats.median(imf) #
         ]
     return feat
 
@@ -154,6 +152,7 @@ def get_values_f(_vector):
         ]
     return feat
 
+# ------------------------------------------------------------------
 
 def get_features_emd(instance, fs):
     features_vector = []
@@ -174,3 +173,30 @@ def get_features_eemd(freq_bands, fs):
             features_vector += get_HHT(imfs, fs)
             # features_vector += get_energy_values(imfs)
     return features_vector
+
+# ------------------------------------------
+
+"""
+def get_imfs_eemd1(signal):
+    try:
+        signal = np.array(signal)
+        components = EEMD()(signal)
+        imfs, res = components[:-1], components[-1]
+        if len(imfs) < 2:
+            print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
+            raise ValueError("imfs {}".format(len(imfs)))
+        return imfs[1:3]
+    except Exception as e:
+        print(e)
+        return []
+
+
+def get_imfs_EEMD(ch_freq_bands):
+    ch_imfs = []
+    for channel, bands in enumerate(ch_freq_bands):
+        eIMFs = []
+        for band, signal in enumerate(bands):
+            eIMFs.append(get_imfs_eemd(signal))
+        ch_imfs.append(eIMFs)
+    return ch_imfs
+"""

@@ -8,13 +8,15 @@ import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='test.log',
+logging.basicConfig(filename='EMD_P300_ch57_stat.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
+logging.info(" ***** CHANNELS:57, FEATURES: STAT ***** \n")
 INSTANCES = [10, 20, 40, 60]
 for ins in INSTANCES:
 
+    logging.info(" -------- Instance: {0} --------".format(ins))
     sr = 200
     cutoff = 50.0
     order = 6
@@ -27,8 +29,9 @@ for ins in INSTANCES:
             instances = get_samples(_index, s_s_chs, sr)
             for f_instance in range(0, ins):  # INSTANCES = [10, 20, 30, 40]
                 instance = preprocessing(cutoff, f_instance, instances, order, sr)
-                ins8 = instance[[7, 15, 25, 33, 43, 51, 55, 56], :]
-                ch_fs_instances.append(get_features_emd(instance, sr))
+                #ins14 = instance[[4, 5, 7, 9, 13, 15, 17, 23, 25, 33, 43, 51, 55, 56], :]
+                #ins8 = instance[[7, 15, 25, 33, 43, 51, 55, 56], :]
+                ch_fs_instances.append(get_features_emd(instance, sr)) # CHANNELS:57
                 ch_tags_instances.append('subject_{0}'.format(subject))
     dataset = {"data": ch_fs_instances, "target": ch_tags_instances}
 
@@ -39,6 +42,5 @@ for ins in INSTANCES:
     logging.info("Best classifier {0} with accuracy {1}".format(result['classifier'], result['accuracy']))
 
     # saving the model
-    model_name = 'EMD_ch8_energy_ins%02d.sav' % (ins)
+    model_name = 'EMD_ch57_stat_ins%02d.sav' % (ins)
     pickle.dump(result["model"], open(model_name, 'wb'))
-    print("after pickle")

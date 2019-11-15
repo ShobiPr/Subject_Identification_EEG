@@ -12,7 +12,7 @@ def get_imfs_eemd(signal):
     return imfs[1:4]
 
 
-def get_imfs(ch_freq_bands):
+def get_imfs_EEMD(ch_freq_bands):
     ch_imfs = []
     for channel, bands in enumerate(ch_freq_bands):
         eIMFs = []
