@@ -23,10 +23,9 @@ def get_imfs_emd(signal):
 
 
 def get_imfs_eemd(signal):
-    signal = np.array(signal)
-    components = EEMD()(signal)
-    imfs, res = components[:-1], components[-1]
-    return imfs[1:4]
+    eemd = EEMD(trials=5)
+    eIMFs = eemd(signal, max_imf=4)
+    return eIMFs[2:]
 
 
 # ------------------------------------------------------------------
