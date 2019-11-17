@@ -24,10 +24,8 @@ def main():
             instances = get_samples(_index, s_s_chs, sr)
             for f_instance in range(0, 2):  # 2
                 instance = np.array(instances[f_instance, :, 1:-1]).transpose()
-                # ch8_ins = instance[[7, 15, 25, 33, 43, 51, 55, 56], :]
-                ins = instance[[55], :]
-                freq_bands = get_frequency_bands(ins, sr) # 1 channel
-                ch_fs_instances.append(get_features_eemd(freq_bands, sr))
+                ch8_ins = instance[[7, 15, 25, 33, 43, 51, 55, 56], :]
+                ch_fs_instances.append(get_features_eemd(ch8_ins, sr))
                 ch_tags_instances.append('subject_{0}'.format(subject))
     dataset = {"data": ch_fs_instances, "target": ch_tags_instances}
 

@@ -165,11 +165,10 @@ def get_features_emd(instance, fs):
     return features_vector
 
 
-def get_features_eemd(freq_bands, fs):
+def get_features_eemd(_instance, fs):
     features_vector = []
-    for channel, bands in enumerate(freq_bands):
-        for i, band in enumerate(bands):
-            imfs = get_imfs_eemd(band)
-            features_vector += get_HHT(imfs, fs)
-            # features_vector += get_energy_values(imfs)
+    for ch, channels in enumerate(_instance):
+        imfs = get_imfs_eemd(channels)
+        # features_vector += get_HHT(imfs, fs)
+        features_vector += get_energy_values(imfs)
     return features_vector
