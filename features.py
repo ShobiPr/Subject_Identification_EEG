@@ -22,8 +22,13 @@ def get_imfs_emd(signal):
         raise e
 
 
+def get_imfs_eemd(band):
+    eemd = EEMD(trials=5)
+    eIMFs = eemd(band, max_imf=4)
+    return eIMFs[2:]
 # ------------------------------------------------------------------
 # HHT FEATURES
+
 
 def instFreq(signal, fs):
     hs = hilbert(signal)
@@ -46,6 +51,7 @@ def mean_instAmp(signal):
 
 # ------------------------------------------------------------------
 # ENERGY FEATURES
+
 
 def teager_energy(data):
     sum_values = sum(abs(data[x] ** 2) if x == 0
@@ -147,6 +153,7 @@ def get_values_f(_vector):
 
 # ------------------------------------------------------------------
 
+
 def get_features_emd(instance, fs):
     features_vector = []
     for i, channel in enumerate(instance):
@@ -158,30 +165,11 @@ def get_features_emd(instance, fs):
     return features_vector
 
 
-
-# ------------------------------------------
-
-"""
-def get_imfs_eemd1(signal):
-    try:
-        signal = np.array(signal)
-        components = EEMD()(signal)
-        imfs, res = components[:-1], components[-1]
-        if len(imfs) < 2:
-            print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
-            raise ValueError("imfs {}".format(len(imfs)))
-        return imfs[1:3]
-    except Exception as e:
-        print(e)
-        return []
-
-
-def get_imfs_EEMD(ch_freq_bands):
-    ch_imfs = []
-    for channel, bands in enumerate(ch_freq_bands):
-        eIMFs = []
-        for band, signal in enumerate(bands):
-            eIMFs.append(get_imfs_eemd(signal))
-        ch_imfs.append(eIMFs)
-    return ch_imfs
-"""
+def get_features_eemd(freq_bands, fs):
+    features_vector = []
+    for channel, bands in enumerate(freq_bands):
+        for i, band in enumerate(bands):
+            imfs = get_imfs_eemd(band)
+            features_vector += get_HHT(imfs, fs)
+            # features_vector += get_energy_values(imfs)
+    return features_vector

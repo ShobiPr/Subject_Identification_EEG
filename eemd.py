@@ -1,7 +1,7 @@
 import numpy as np
 from dataset import get_subdataset, get_samples
 from filters import get_frequency_bands
-from eemd_features import get_features_eemd
+from features import get_features_eemd
 from classefiers import random_forest, decision_tree, knn, SVM, naive_bayes, selector
 
 import pickle
