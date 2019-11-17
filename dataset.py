@@ -11,7 +11,7 @@ def get_samples(_index, s_s_chs, sr, _size=1.3):
 
 
 def get_subdataset(_S=1, Sess=1):
-    _file = 'train/Data_S%02d_Sess%02d.csv' % (_S, Sess)
+    _file = 'P300/Data_S%02d_Sess%02d.csv' % (_S, Sess)
     _f = open(_file).readlines()
     channels = []
     _header = []
@@ -20,8 +20,7 @@ def get_subdataset(_S=1, Sess=1):
             channels.append(eval(_rows))
         else:
             _header = _rows
-            _header = _header.split(',')
-    return np.array(channels), np.array(_header[1:-1])
+    return np.array(channels)
 
 
 def get_dataset():

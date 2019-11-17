@@ -6,11 +6,12 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import cross_val_score
 
+import pickle
 import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='EMD_P300_ch57_stat.log',
+logging.basicConfig(filename='EMD_P300_ch8_stat.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -118,7 +119,7 @@ def selector(dataTraining, targetTraining):
         accuracyArray.append(results["accuracy"])
         clfArray.append(results["clf"])
         logging.info("Selector step {0}: {1}, {2}".format(i, results["classifier"], results["accuracy"]))
-    print("--------------------------")
+    logging.info("--------------------------")
     maxAccuracy = max(accuracyArray)
     pos = accuracyArray.index(maxAccuracy)
     bClassifier = classArray[pos]
