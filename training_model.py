@@ -51,10 +51,10 @@ def get_dataset(n_subjects=1, n_sessions=1):
     return {"data": ch_fs_instances, "target": ch_tags_instances}  # 2 (data, target), data:9, target: 9
 
 
+"""
 if __name__ == '__main__':
     dataset = get_dataset(n_subjects=1, n_sessions=1)
 
-"""
     n_subjects = 5
     n_sessions = 1
     dataset = get_dataset(n_subjects=n_subjects, n_sessions=n_sessions)
