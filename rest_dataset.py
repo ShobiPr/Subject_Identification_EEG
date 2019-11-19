@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
+import pywt
 from scipy.stats import kurtosis
 from pyhht import EMD
+import matplotlib.pyplot as plt
 from classefiers import selector
 import logging
 
@@ -49,6 +51,25 @@ def read_csv(_S=1, Sess=1):
     data = pd.read_csv(_file, header=None, index_col=False)
     return data.transpose()
 
+
+def waveletTransform(signal):
+    labels = ['cA5', 'cd5', 'cd4', 'cd3', 'cd2', 'cd1']
+    coefficients = pywt.wavedec(signal, 'sym7', level=5)
+    fig, axs = plt.subplots(nrows=len(coefficients))
+    print(len(coefficients))
+    for i in range(len(coefficients)):
+        # explicitly create and save the secondary axis
+        axs[i].plot(coefficients[i])
+        axs[i].set_ylabel(labels[i])
+
+    plt.show()
+
+data = read_csv()
+signal = data[0] - 4200
+waveletTransform(signal)
+
+
+"""
 fs = 128
 ch_fs_instances = []
 ch_tags_instances = []
@@ -64,4 +85,4 @@ targetTraining = dataset['target']
 result = selector(dataTraining, targetTraining)
 
 logging.info("Best classifier {0} with accuracy {1}".format(result['classifier'], result['accuracy']))
-
+"""

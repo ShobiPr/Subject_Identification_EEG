@@ -1,4 +1,5 @@
 import numpy as np
+import pywt
 from dataset import get_subdataset, get_samples
 from features import get_features_eemd
 from classefiers import random_forest, decision_tree, knn, SVM, naive_bayes, selector
@@ -11,6 +12,12 @@ warnings.filterwarnings("ignore")
 logging.basicConfig(filename='EEMD.log',
                     level=logging.INFO,
                     format='%(asctime)s %(levelname)-8s %(message)s')
+
+
+def waveletTransform(signal):
+    labels = ['cA5', 'cd5', 'cd4', 'cd3', 'cd2', 'cd1']
+    coefficients = pywt.wavedec(signal, 'sym7', level=5)
+
 
 def main():
     sr = 200

@@ -11,7 +11,7 @@ import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='EMD_resting_test.log',
+logging.basicConfig(filename='EEMD.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
