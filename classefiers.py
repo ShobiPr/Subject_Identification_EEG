@@ -11,7 +11,7 @@ import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='EMD_P300_ch8_stat.log',
+logging.basicConfig(filename='EMD_resting_test.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -127,7 +127,7 @@ def selector(dataTraining, targetTraining):
     return {"model": bestClf, "classifier": bClassifier, "accuracy": maxAccuracy}
 
 
-C_F_V = 2
+C_F_V = 3
 RANDOM_STATE = 0
 CLASSIFIERS = [lambda l_dt, l_tt: random_forest(l_dt, l_tt),
                lambda l_dt, l_tt: decision_tree(l_dt, l_tt),

@@ -7,7 +7,7 @@ from preprosessing import preprocessing
 from features import get_features_emd
 import logging
 
-logging.basicConfig(filename='validation_EMD_HHT_ch14_ins40.log',
+logging.basicConfig(filename='validation_EMD_ch57_stat_ins60.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -42,11 +42,11 @@ def get_dataset(subject, session=5):
     s_s_chs, _header = get_subdataset(subject, session)
     _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
     instances = get_samples(_index, s_s_chs, sr)
-    for f_instance in range(0, 40):  # len(instances) 60 instances
+    for f_instance in range(0, 60):  # len(instances) 60 instances
         instance = preprocessing(cutoff, f_instance, instances, order, sr)
-        ins14 = instance[[4, 5, 7, 9, 13, 15, 17, 23, 25, 33, 43, 51, 55, 56], :]
+        #ins14 = instance[[4, 5, 7, 9, 13, 15, 17, 23, 25, 33, 43, 51, 55, 56], :]
         #ins8 = instance[[7, 15, 25, 33, 43, 51, 55, 56], :]
-        ch_fs_instances.append(get_features_emd(ins14, sr))
+        ch_fs_instances.append(get_features_emd(instance, sr))
         ch_tags_instances.append('subject_{0}'.format(subject))
     return {"data": ch_fs_instances, "target": ch_tags_instances}
 
@@ -81,7 +81,7 @@ def eval_model(dataset, clf):
 for subject in range(1, 27):
     session = 5
     dataset = get_dataset(subject, session)
-    model = open('EMD_ch14_HHT/EMD_ch14_HHT_ins40.sav', 'rb')
+    model = open('EMD_P300_ch57_stat/EMD_ch57_stat_ins60.sav', 'rb')
     clf = pickle.load(model)
     logging.info(" -------- Subject: {0} --------".format(subject))
     eval_model(dataset, clf)
