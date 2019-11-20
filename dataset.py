@@ -14,12 +14,11 @@ def get_subdataset(_S=1, Sess=1):
     _file = 'P300/Data_S%02d_Sess%02d.csv' % (_S, Sess)
     _f = open(_file).readlines()
     channels = []
-    _header = []
     for i, _rows in enumerate(_f):
         if i > 0:
             channels.append(eval(_rows))
         else:
-            _header = _rows
+            _headers = _rows
     return np.array(channels)
 
 

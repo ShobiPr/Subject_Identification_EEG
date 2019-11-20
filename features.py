@@ -9,7 +9,7 @@ from PyEMD import EEMD
 
 
 # Extract IMFs from EEG
-def get_imfs_emd(signal):
+def get_imfs(signal):
     try:
         # decomposer_signal = EMD(signal, fixe=100, n_imfs=2)
         decomposer_signal = EMD(signal, n_imfs=4)
@@ -17,7 +17,7 @@ def get_imfs_emd(signal):
         if len(imfs) < 2:
             print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
             raise ValueError("imfs {}".format(len(imfs)))
-        return imfs[:2]
+        return imfs[:4]
     except Exception as e:
         raise e
 
@@ -26,8 +26,10 @@ def get_imfs_eemd(band):
     eemd = EEMD(trials=5)
     eIMFs = eemd(band, max_imf=4)
     return eIMFs[2:]
+
+
 # ------------------------------------------------------------------
-# HHT FEATURES
+# HHT-BASED FEATURES
 
 
 def instFreq(signal, fs):
@@ -49,6 +51,7 @@ def mean_instAmp(signal):
     i_a = instAmp(signal)
     return np.sum(i_a) / len(i_a)
 
+
 # ------------------------------------------------------------------
 # ENERGY FEATURES
 
@@ -62,6 +65,10 @@ def teager_energy(data):
 
 def instantaneous_energy(data):
     return np.log10((1 / len(data)) * sum(i ** 2 for i in data))
+
+
+# ------------------------------------------------------------------
+# FRACTAL FEATURES
 
 
 def pfd(a):
@@ -101,29 +108,34 @@ def get_statistics_values(imfs):
     # Mean, maximum, minimum, standard deviation, variance, kurtosis, skewness, sum and median
     for ii, imf in enumerate(imfs):
         feat += [
-            stats.mean(imf), #
+            stats.mean(imf),  #
             np.var(imf),
             np.std(imf),
             kurtosis(imf),
-            skew(imf), #
+            skew(imf),  #
             np.max(imf),
             np.min(imf),
-            stats.median(imf) #
+            stats.median(imf)  #
         ]
     return feat
 
 
+def get_fractal_values(imfs):
+    feat = []
+    for ii, imf in enumerate(imfs):
+        feat += [
+            hfd(imf),
+            pfd(imf)
+        ]
+    return feat
+
 
 def get_energy_values(imfs):
     feat = []
-    # For each imf compute
-    # for imf in imfs:
     for ii, imf in enumerate(imfs):
         feat += [
             instantaneous_energy(imf),
             teager_energy(imf),
-            hfd(imf),
-            pfd(imf)
         ]
     return feat
 
@@ -137,7 +149,7 @@ def get_HHT(imfs, fs):
         ]
     return feat
 
-
+"""
 def get_values_f(_vector):
     feat = []
     fs = 200
@@ -151,6 +163,7 @@ def get_values_f(_vector):
             mean_instAmp(_vec)
         ]
     return feat
+"""
 
 # ------------------------------------------------------------------
 
@@ -158,11 +171,8 @@ def get_values_f(_vector):
 def get_features_emd(instance, fs):
     features_vector = []
     for i, channel in enumerate(instance):
-        imfs = get_imfs_emd(channel)
-        features_vector += get_statistics_values(imfs)
-        # features_vector += get_energy_values(imfs)
-        # features_vector += get_HHT(imfs,fs)
-        # features_vector += get_values_f(imfs)
+        imfs = get_imfs(channel)
+        features_vector += get_energy_values(imfs)
     return features_vector
 
 
@@ -170,6 +180,6 @@ def get_features_eemd(_instance, fs):
     features_vector = []
     for ch, channels in enumerate(_instance):
         imfs = get_imfs_eemd(channels)
-        features_vector += get_HHT(imfs, fs)
-        # features_vector += get_energy_values(imfs)
+        # features_vector += get_HHT(imfs, fs)
+        features_vector += get_energy_values(imfs)
     return features_vector

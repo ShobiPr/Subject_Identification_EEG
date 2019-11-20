@@ -11,9 +11,9 @@ import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='EEMD.log',
-                    level=logging.INFO,
-                    format='%(levelname)s:%(message)s')
+#logging.basicConfig(filename='EEMD.log',
+#                    level=logging.INFO,
+#                    format='%(levelname)s:%(message)s')
 
 
 def decision_tree(dataTraining, targetTraining):
@@ -127,7 +127,7 @@ def selector(dataTraining, targetTraining):
     return {"model": bestClf, "classifier": bClassifier, "accuracy": maxAccuracy}
 
 
-C_F_V = 3
+C_F_V = 10
 RANDOM_STATE = 0
 CLASSIFIERS = [lambda l_dt, l_tt: random_forest(l_dt, l_tt),
                lambda l_dt, l_tt: decision_tree(l_dt, l_tt),

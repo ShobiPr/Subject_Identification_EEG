@@ -9,7 +9,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def butter_lowpass_filter(data, cutoff, fs, order=5):
+def butter_lowpass_filter(data, cutoff, fs, order=4):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
@@ -17,7 +17,7 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
     return y
 
 
-def butter_highpass_filter(data, cutoff, fs, order=5):
+def butter_highpass_filter(data, cutoff, fs, order=4):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = signal.butter(order, normal_cutoff, btype='high', analog=False)
@@ -25,7 +25,7 @@ def butter_highpass_filter(data, cutoff, fs, order=5):
     return y
 
 
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=4):
     nyq = 0.5 * fs
     low = lowcut / nyq
     high = highcut / nyq
