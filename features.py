@@ -101,16 +101,17 @@ def get_statistics_values(imfs):
     # Mean, maximum, minimum, standard deviation, variance, kurtosis, skewness, sum and median
     for ii, imf in enumerate(imfs):
         feat += [
-            # stats.mean(imf), #
+            stats.mean(imf), #
             np.var(imf),
             np.std(imf),
             kurtosis(imf),
-            # skew(imf), #
+            skew(imf), #
             np.max(imf),
             np.min(imf),
-            # stats.median(imf) #
+            stats.median(imf) #
         ]
     return feat
+
 
 
 def get_energy_values(imfs):
@@ -169,6 +170,6 @@ def get_features_eemd(_instance, fs):
     features_vector = []
     for ch, channels in enumerate(_instance):
         imfs = get_imfs_eemd(channels)
-        # features_vector += get_HHT(imfs, fs)
-        features_vector += get_energy_values(imfs)
+        features_vector += get_HHT(imfs, fs)
+        # features_vector += get_energy_values(imfs)
     return features_vector
