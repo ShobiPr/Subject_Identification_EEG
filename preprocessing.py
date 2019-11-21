@@ -35,6 +35,7 @@ def preprocessing(lowcut, highcut, f_instance, instances, order, fs):
     return np.array(filtered_instance)
 
 
+"""
 def get_samples(_index, s_s_chs, sr, _size=1.3):
     return s_s_chs[_index:int(math.ceil(_index + (_size * sr)))][:]
 
@@ -89,8 +90,6 @@ def get_signals_resiting():
     return data
 
 
-# data = get_signals_resiting()
-
 def get_signals_P300():
     sr = 200
     lowcut = 0.1
@@ -107,8 +106,6 @@ def get_signals_P300():
     return data
 
 
-data = get_signals_P300()
-
 for i in range(0, len(data)):
     plt.plot(data[i], label='Subject {0}'.format(i + 1), linewidth=0.9)
 plt.title('Filtered EEG-signals [P300]')
@@ -117,3 +114,4 @@ plt.ylabel('Amplitude [mV]')
 plt.legend(bbox_to_anchor=(1, 1), loc='upper left')
 # plt.savefig('.svg', format='svg')
 plt.show()
+"""

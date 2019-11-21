@@ -108,14 +108,14 @@ def get_statistics_values(imfs):
     # Mean, maximum, minimum, standard deviation, variance, kurtosis, skewness, sum and median
     for ii, imf in enumerate(imfs):
         feat += [
-            stats.mean(imf),  #
-            np.var(imf),
-            np.std(imf),
-            kurtosis(imf),
-            skew(imf),  #
-            np.max(imf),
-            np.min(imf),
-            stats.median(imf)  #
+            # stats.mean(imf),  # , , ,
+            np.var(imf),        # 1, 9, 17, 25, 33,
+            # np.std(imf),        # 2, ,, 18,     34,
+            # kurtosis(imf),      # , ,,          35.
+            # skew(imf),          # , ,,          36
+            np.max(imf),        # 5, 13, 21, 29 37
+            np.min(imf),        # 6, 14, 22, 30 38
+            # stats.median(imf)   # , , 23,    31, 39
         ]
     return feat
 
@@ -144,36 +144,39 @@ def get_HHT(imfs, fs):
     feat = []
     for i, imf in enumerate(imfs):
         feat += [
-            marginal_frequency(imf, fs),
+            marginal_frequency(imf, fs),    # 0, 2, 4, 6, 8, 10, 12, 14,
             mean_instAmp(imf)
         ]
     return feat
 
-"""
-def get_values_f(_vector):
+
+def get_values_f(_vector, fs):
     feat = []
-    fs = 200
     for ii, _vec in enumerate(_vector):
         feat += [
+            np.var(_vec),
+            np.max(_vec),
+            np.min(_vec),
             instantaneous_energy(_vec),
             teager_energy(_vec),
             hfd(_vec),
-            pfd(_vec),
-            marginal_frequency(_vec, fs),
-            mean_instAmp(_vec)
+            marginal_frequency(_vec, fs)
         ]
     return feat
-"""
+
 
 # ------------------------------------------------------------------
-
 
 def get_features_emd(instance, fs):
     features_vector = []
     for i, channel in enumerate(instance):
-        imfs = get_imfs(channel)
+        imfs = get_imfs_emd(channel)
         if len(imfs) > 1:
-            features_vector += get_statistics_values(imfs)
+            # features_vector += get_statistics_values(imfs)
+            # features_vector += get_energy_values(imfs)
+            # features_vector += get_fractal_values(imfs)
+            # features_vector += get_HHT(imfs, fs)
+            features_vector += get_values_f(imfs, fs)
     return features_vector
 
 
