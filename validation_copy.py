@@ -3,7 +3,7 @@ from __future__ import division
 import numpy as np
 import pickle
 import math
-from preprosessing import preprocessing
+from preprocessing import preprocessing
 from features import get_features_emd
 import logging
 

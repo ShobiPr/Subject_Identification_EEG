@@ -9,15 +9,15 @@ from PyEMD import EEMD
 
 
 # Extract IMFs from EEG
-def get_imfs(signal):
+def get_imfs_emd(signal):
     try:
-        # decomposer_signal = EMD(signal, fixe=100, n_imfs=2)
-        decomposer_signal = EMD(signal, n_imfs=4)
+        #decomposer_signal = EMD(signal, fixe=100, n_imfs=2)
+        decomposer_signal = EMD(signal, n_imfs=3)
         imfs = decomposer_signal.decompose()
-        if len(imfs) < 2:
-            print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
-            raise ValueError("imfs {}".format(len(imfs)))
-        return imfs[:4]
+        #if len(imfs) < 2:
+        #    print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
+        #    raise ValueError("imfs {}".format(len(imfs)))
+        return imfs[:2]
     except Exception as e:
         raise e
 
@@ -172,7 +172,8 @@ def get_features_emd(instance, fs):
     features_vector = []
     for i, channel in enumerate(instance):
         imfs = get_imfs(channel)
-        features_vector += get_energy_values(imfs)
+        if len(imfs) > 1:
+            features_vector += get_statistics_values(imfs)
     return features_vector
 
 

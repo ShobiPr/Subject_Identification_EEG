@@ -5,7 +5,7 @@ import math
 import matplotlib.pyplot as plt
 # from classefiers import selector
 from features import get_features
-from preprosessing import preprocessing
+from preprocessing import preprocessing
 import warnings
 
 warnings.filterwarnings("ignore")
