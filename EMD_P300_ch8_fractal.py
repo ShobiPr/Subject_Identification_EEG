@@ -1,7 +1,5 @@
-import numpy as np
-
 from dataset import get_subdataset, get_samples
-from features import get_imfs_emd, get_energy_values
+from features import get_imfs_emd, get_fractal_values
 from preprocessing import preprocessing
 from classefiers import random_forest, decision_tree, knn, SVM, naive_bayes, selector
 
@@ -10,27 +8,27 @@ import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='EMD_P300_ch8_energy.log',
+logging.basicConfig(filename='EMD_P300_ch8_fractal.log',
                     level=logging.INFO,
                     format='%(asctime)s %(levelname)-8s %(message)s')
 
-""" With preprocessing """
 
-
-def get_features(instance):
+def get_features_emd(instance):
     features_vector = []
     for i, channel in enumerate(instance):
         imfs = get_imfs_emd(channel)
-        features_vector += get_energy_values(imfs)
+        if len(imfs) > 1:
+            features_vector += get_fractal_values(imfs)
     return features_vector
 
 
 def main():
-    logging.info(" ***** CHANNELS:8, FEATURES: energy ***** \n")
+    logging.info(" ***** CHANNELS:8, FEATURES: fractal ***** \n")
+    logging.info(" ---------- With preprocessing ---------- \n")
     INSTANCES = [10, 20, 40, 60]
     sr = 200
     lowcut = 0.1
-    highcut = 50.0
+    highcut = 70.0
     order = 4
     for ins in INSTANCES:
         logging.info(" -------- Instance: {0} --------".format(ins))
@@ -44,7 +42,7 @@ def main():
                 for f_instance in range(0, ins):
                     instance = preprocessing(lowcut, highcut, f_instance, instances, order, sr)
                     ins8 = instance[[7, 15, 25, 33, 43, 51, 55, 56], :]
-                    ch_fs_instances.append(get_features(ins8))  # CHANNELS: 8
+                    ch_fs_instances.append(get_features_emd(ins8))  # CHANNELS: 8
                     ch_tags_instances.append('subject_{0}'.format(subject))
         dataset = {"data": ch_fs_instances, "target": ch_tags_instances}
 
@@ -55,7 +53,7 @@ def main():
         logging.info("Best classifier {0} with accuracy {1} \n".format(result['classifier'], result['accuracy']))
 
         # saving the model
-        model_name = 'EMD_P300_ch8_energy_ins%02d.sav' % (ins)
+        model_name = 'EMD_P300_ch8_fractal_ins%02d.sav' % (ins)
         pickle.dump(result["model"], open(model_name, 'wb'))
 
 
