@@ -4,7 +4,7 @@ import numpy as np
 import statistics as stats
 from scipy import signal
 import matplotlib.pyplot as plt
-from filters import butter_bandpass_filter
+from preprocessing.filters import butter_bandpass_filter
 import math
 import scipy.io as spio
 import warnings
@@ -21,7 +21,7 @@ def notch_filter(instance, sr, f0=60.0, Q=10.0):
     return np.array(filtered_instance)
 
 
-def notch_filter(s, sr, f0=50.0, Q=60.0):
+def notch_filter(s, sr, f0=50.0, Q=10.0):
     b, a = signal.iirnotch(f0, Q, sr)
     return signal.filtfilt(b, a, s)
 
@@ -33,12 +33,23 @@ def common_average_reference(instance):
     return np.array(CAR)
 
 
-def preprocessing(lowcut, highcut, f_instance, instances, order, fs):
+def preprocessing_P300(instances, f_instance, fs, lowcut=0.05, highcut=70.0, order=4):
+    """ Notch filter, f0 = 50, Q=10.0
+        bandpass : [0.5-70.0] """
     instance = np.array(instances[f_instance, :, 1:-1]).transpose()
     filtered_instance = []
     for i, channel in enumerate(instance):
-        notch_f = notch_filter(channel, fs, f0=50.0, Q=60.0)
-        filtered_instance.append(butter_bandpass_filter(notch_f, lowcut, highcut, fs, order=order))
+        notch_f = notch_filter(channel, fs, f0=50-0, Q=10.0)
+        filtered_instance.append(butter_bandpass_filter(notch_f, lowcut, highcut, fs, order))
+    return np.array(filtered_instance)
+
+
+def preprocessing_resting(sub_instance, sr, lowcut, highcut, order=4):
+    """ Offset: 4200  """
+    filtered_instance = []
+    for i, channel in enumerate(sub_instance):
+        signal = channel - 4200
+        filtered_instance.append(signal)
     return np.array(filtered_instance)
 
 

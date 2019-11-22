@@ -157,9 +157,9 @@ def get_values_f(_vector, fs):
             np.var(_vec),
             np.max(_vec),
             np.min(_vec),
+            hfd(_vec),
             instantaneous_energy(_vec),
             teager_energy(_vec),
-            hfd(_vec),
             marginal_frequency(_vec, fs)
         ]
     return feat
