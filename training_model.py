@@ -1,11 +1,9 @@
 from __future__ import division
 import numpy as np
-import pickle
 import math
-import matplotlib.pyplot as plt
 # from classefiers import selector
 from features import get_features
-from preprocessing import preprocessing
+import preprocessing
 import warnings
 
 warnings.filterwarnings("ignore")

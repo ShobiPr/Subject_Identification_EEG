@@ -2,8 +2,8 @@ import numpy as np
 import scipy.io as spio
 
 from features import get_imfs_emd, get_energy_values
-from preprocessing.preprocessing import preprocessing_resting
-from classefiers import random_forest, decision_tree, knn, SVM, naive_bayes, selector
+from preprocessing import preprocessing_resting
+from classefiers import selector
 
 import pickle
 import logging
@@ -63,7 +63,6 @@ def main():
                         sub_instance = _instance[:, index_start:index_end]
                         ins = preprocessing_resting(sub_instance, sr, lowcut, highcut, order=order)
                         print("preprocessed")
-                        # print('sub-instance {0} with shape {1} for subject {2}'.format(_i, sub_instance.shape, subject))
                         ch_fs_instances.append(get_features_emd(sub_instance))
                         ch_tags_instances.append('subject_{0}'.format(subject))
         dataset = {"data": ch_fs_instances, "target": ch_tags_instances}

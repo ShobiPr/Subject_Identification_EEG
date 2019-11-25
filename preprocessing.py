@@ -3,10 +3,7 @@ from __future__ import division
 import numpy as np
 import statistics as stats
 from scipy import signal
-import matplotlib.pyplot as plt
-from preprocessing.filters import butter_bandpass_filter
-import math
-import scipy.io as spio
+from filters import butter_bandpass_filter
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -33,18 +30,19 @@ def common_average_reference(instance):
     return np.array(CAR)
 
 
-def preprocessing_P300(instances, f_instance, fs, lowcut=0.05, highcut=70.0, order=4):
+def preprocessing_P300(instances, f_instance, fs, ch, lowcut=0.05, highcut=70.0, order=4):
     """ Notch filter, f0 = 50, Q=10.0
         bandpass : [0.5-70.0] """
     instance = np.array(instances[f_instance, :, 1:-1]).transpose()
+    ins = instance[ch, :]
     filtered_instance = []
-    for i, channel in enumerate(instance):
+    for i, channel in enumerate(ins):
         notch_f = notch_filter(channel, fs, f0=50-0, Q=10.0)
         filtered_instance.append(butter_bandpass_filter(notch_f, lowcut, highcut, fs, order))
     return np.array(filtered_instance)
 
 
-def preprocessing_resting(sub_instance, sr, lowcut, highcut, order=4):
+def preprocessing_resting(sub_instance):
     """ Offset: 4200  """
     filtered_instance = []
     for i, channel in enumerate(sub_instance):

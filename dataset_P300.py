@@ -1,4 +1,4 @@
-from PyEMD import EEMD, Visualisation
+from preprocessing import preprocessing_P300
 import numpy as np
 import math
 
@@ -22,10 +22,16 @@ def get_subdataset(_S=1, Sess=1):
     return np.array(channels)
 
 
-def get_dataset():
+def get_dataset(n_subjects, n_sessions, n_ins):
     sr = 200
-    s_s_chs, _header = get_subdataset()
-    _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
-    instances = get_samples(_index, s_s_chs, sr)  # (60, 260, 59)
-    instance = np.array(instances[1, :, 1:-1]).transpose()  # (57, 260)
-    return instance
+    s_instance = []
+    for subject in range(1, n_subjects + 1):  # 26
+        for session in range(1, n_sessions + 1):  # 4
+            s_s_chs = get_subdataset(subject, session)
+            _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
+            instances = get_samples(_index, s_s_chs, sr)
+            for f_instance in range(0, n_ins):
+                instance = preprocessing_P300(instances, f_instance, sr)
+                ins1 = instance[55]
+                s_instance.append(ins1)
+    return s_instance

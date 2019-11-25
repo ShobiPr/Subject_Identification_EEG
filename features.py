@@ -6,18 +6,22 @@ from scipy.signal import hilbert
 import numpy as np
 from pyhht import EMD
 from PyEMD import EEMD
+from scipy.spatial import distance
+from filters import frequency_bands
 
 
 # Extract IMFs from EEG
 def get_imfs_emd(signal):
     try:
-        #decomposer_signal = EMD(signal, fixe=100, n_imfs=2)
-        decomposer_signal = EMD(signal, n_imfs=3)
+        decomposer_signal = EMD(signal)
+        # decomposer_signal = EMD(signal, fixe=100, n_imfs=2)
+        # decomposer_signal = EMD(signal, n_imfs=5)
         imfs = decomposer_signal.decompose()
-        #if len(imfs) < 2:
-        #    print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
-        #    raise ValueError("imfs {}".format(len(imfs)))
-        return imfs[:2]
+        if len(imfs) < 2:
+            print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
+            raise ValueError("imfs {}".format(len(imfs)))
+        #return imfs[:2]
+        return imfs
     except Exception as e:
         raise e
 
@@ -102,22 +106,24 @@ def hfd(a, k_max=None):
 
 # ------------------------------------------------------------------
 
-def get_statistics_values(imfs):
+def get_statistics_values(_vector):
     feat = []
     # For each imf compute 9 values and return it in a single vector. (5 values in this example)
     # Mean, maximum, minimum, standard deviation, variance, kurtosis, skewness, sum and median
-    for ii, imf in enumerate(imfs):
+    for ii, _vec in enumerate(_vector):
         feat += [
-            stats.mean(imf),  #
-            np.var(imf),
-            np.std(imf),
-            kurtosis(imf),
-            skew(imf),  #
-            np.max(imf),
-            np.min(imf),
-            stats.median(imf)  #
+            stats.mean(_vec),  #
+            np.var(_vec),
+            np.std(_vec),
+            kurtosis(_vec),
+            skew(_vec),  #
+            np.max(_vec),
+            np.min(_vec),
+            stats.median(_vec)  #
         ]
     return feat
+
+
 
 
 def get_fractal_values(imfs):
@@ -167,17 +173,30 @@ def get_values_f(_vector, fs):
 
 # ------------------------------------------------------------------
 
+def get_features_bands(sub_instance, sr):
+    features_vector = []
+    for i, channel in enumerate(sub_instance):
+        sub_bands = frequency_bands(channel, sr)
+        features_vector += get_statistics_values(sub_bands)
+    return features_vector
+
+
 def get_features_emd(instance, fs):
     features_vector = []
     for i, channel in enumerate(instance):
-        imfs = get_imfs_emd(channel)
-        if len(imfs) > 1:
-            # features_vector += get_statistics_values(imfs)
-            # features_vector += get_energy_values(imfs)
-            # features_vector += get_fractal_values(imfs)
-            # features_vector += get_HHT(imfs, fs)
-            features_vector += get_values_f(imfs, fs)
-    return features_vector
+        if i < 2:
+            imfs = get_imfs_emd(channel)
+            print("nr. of IMFs", np.shape(imfs))
+            for k in range(0, len(imfs)):
+                d_minsk = distance.minkowski(channel, imfs[k])
+                print("d_minsk = {0}, imfs nr: {1}".format(d_minsk, k+1))
+            #if len(imfs) > 1 and i ==1:
+                # features_vector += get_statistics_values(imfs)
+                # features_vector += get_energy_values(imfs)
+                # features_vector += get_fractal_values(imfs)
+                # features_vector += get_HHT(imfs, fs)
+                # features_vector += get_values_f(imfs, fs)
+        # return features_vector
 
 
 def get_features_eemd(_instance, fs):

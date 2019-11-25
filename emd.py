@@ -1,8 +1,7 @@
 from dataset import get_subdataset, get_samples
-from preprocessing import preprocessing
 import numpy as np
 from features import get_features_emd
-from classefiers import random_forest, decision_tree, knn, SVM, naive_bayes, selector
+from classefiers import selector
 
 import pickle
 import logging

@@ -8,6 +8,9 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
+
+
+
 def consecutive_index(data, _value, stepsize=1):
     data = np.where(data == _value)[0]
     result = np.split(data, np.where(np.diff(data) != stepsize)[0] + 1)
@@ -35,14 +38,20 @@ def get_dataset():
                 index_start, index_end = instance_len * _i, instance_len * (_i + 1)
                 sub_instance = _instance[:, index_start:index_end]
                 print('sub-instance {0} with shape {1} for subject {2}'.format(_i, sub_instance.shape, subject))
-            ch_fs_instances.append(get_features_emd(sub_instance, sr))
-    return {"data": ch_fs_instances}
+
+            ch_fs_instances.append(get_features_emd(subject, sr))
+
+            #ch_fs_instances.append(get_features_emd(sub_instance, sr))
+    #return {"data": ch_fs_instances}
+    return None
 
 
-data = get_dataset()
+get_dataset()
+
+# data = get_dataset()
 
 
-
+"""
 for i, ii in enumerate(data['data']):
     plt.plot(ii, linewidth=0.8)
 plt.xlabel('Feature')
@@ -51,3 +60,4 @@ plt.grid(True)
 plt.title('Statistical features')
 plt.savefig('features_stat.svg', format='svg')
 plt.show()
+"""
