@@ -11,7 +11,7 @@ def get_samples(_index, s_s_chs, sr, _size=1.3):
 
 
 def get_subdataset(_S=1, Sess=1):
-    _file = 'P300/Data_S%02d_Sess%02d.csv' % (_S, Sess)
+    _file = 'P300/train/Data_S%02d_Sess%02d.csv' % (_S, Sess)
     _f = open(_file).readlines()
     channels = []
     for i, _rows in enumerate(_f):

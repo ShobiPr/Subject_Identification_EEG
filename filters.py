@@ -1,48 +1,54 @@
 from __future__ import division
-from scipy.signal import butter, lfilter
-
-from scipy import signal
+from scipy.signal import freqz, iirnotch, filtfilt, butter
 import warnings
 
 warnings.filterwarnings("ignore")
 
 
-def butter_lowpass_filter(data, cutoff, fs, order=4):
-    nyq = 0.5 * fs
-    normal_cutoff = cutoff / nyq
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)
-    y = signal.filtfilt(b, a, data)
-    return y
+def notch_filter(s, sr, f0=50, Q=10.0):
+    b, a = iirnotch(f0, Q, sr)
+    return filtfilt(b, a, s)
 
 
-def butter_highpass_filter(data, cutoff, fs, order=4):
-    nyq = 0.5 * fs
-    normal_cutoff = cutoff / nyq
-    b, a = signal.butter(order, normal_cutoff, btype='high', analog=False)
-    y = signal.filtfilt(b, a, data)
-    return y
-
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=4):
+def butter_bandpass(lowcut, highcut, fs, order=6):
     nyq = 0.5 * fs
     low = lowcut / nyq
     high = highcut / nyq
     b, a = butter(order, [low, high], btype='band')
-    y = signal.filtfilt(b, a, data)
+    return b, a
+
+
+def butter_bandpass_filter(data, fs, lowcut=0.5, highcut=70.0, order=6):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = filtfilt(b, a, data)
     return y
 
-"""
-def butter_bandpass(lowcut, highcut, sr, order=4):
-    nyq = 0.5 * sr
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='bandpass')
 
-def butter_bandpass_filter(signal, lowcut, highcut, sr, order=4):
-    b, a = butter_bandpass_filter(lowcut, highcut, sr, order)
-    y = lfilter(b, a, signal)
+def butter_lowpass(cutoff, fs, order=6):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return b, a
+
+
+def butter_lowpass_filter(data, cutoff, fs, order=6):
+    b, a = butter_lowpass(cutoff, fs, order=order)
+    y = filtfilt(b, a, data)
     return y
-"""
+
+
+def butter_highpass(cutoff, fs, order=6):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='high', analog=False)
+    return b, a
+
+
+def butter_highpass_filter(data, cutoff, fs, order=6):
+    b, a = butter_highpass(cutoff, fs, order=order)
+    y = filtfilt(b, a, data)
+    return y
+
 
 def delta_wave(signal, fs):
     return butter_bandpass_filter(signal, 0.5, 4.0, fs)

@@ -8,6 +8,11 @@ from pyhht import EMD
 from PyEMD import EEMD
 from scipy.spatial import distance
 from filters import frequency_bands
+from math import *
+import logging
+from decimal import Decimal
+
+
 
 
 # Extract IMFs from EEG
@@ -15,7 +20,6 @@ def get_imfs_emd(signal):
     try:
         decomposer_signal = EMD(signal)
         # decomposer_signal = EMD(signal, fixe=100, n_imfs=2)
-        # decomposer_signal = EMD(signal, n_imfs=5)
         imfs = decomposer_signal.decompose()
         if len(imfs) < 2:
             print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
@@ -124,8 +128,6 @@ def get_statistics_values(_vector):
     return feat
 
 
-
-
 def get_fractal_values(imfs):
     feat = []
     for ii, imf in enumerate(imfs):
@@ -181,21 +183,39 @@ def get_features_bands(sub_instance, sr):
     return features_vector
 
 
+def p_root(value, root):
+    root_value = 1 / float(root)
+    return round(Decimal(value) **
+                 Decimal(root_value), 3)
+
+
+def minkowski_distance(x, y, p_value):
+    return p_root(sum(pow(abs(a - b), p_value) for a, b in zip(x, y)), p_value)
+
+
+def feature_scaling(d_minsk):
+    scaling = []
+    x_min = min(d_minsk)
+    x_max = max(d_minsk)
+    for i, x in enumerate(d_minsk):
+        x_new = (x - x_min) / (x_max - x_min)
+        scaling.append(x_new)
+        logging.info(("imfs nr: {0}, d_minsk = {1} ".format((i + 1), x_new)))
+    logging.info("\n")
+    return scaling
+
 def get_features_emd(instance, fs):
     features_vector = []
     for i, channel in enumerate(instance):
-        if i < 2:
-            imfs = get_imfs_emd(channel)
-            print("nr. of IMFs", np.shape(imfs))
-            for k in range(0, len(imfs)):
-                d_minsk = distance.minkowski(channel, imfs[k])
-                print("d_minsk = {0}, imfs nr: {1}".format(d_minsk, k+1))
-            #if len(imfs) > 1 and i ==1:
-                # features_vector += get_statistics_values(imfs)
-                # features_vector += get_energy_values(imfs)
-                # features_vector += get_fractal_values(imfs)
-                # features_vector += get_HHT(imfs, fs)
-                # features_vector += get_values_f(imfs, fs)
+        logging.info("Channel: {0}".format(i))
+        imfs = get_imfs_emd(channel)
+        d_minsk = []
+        for k in range(0, len(imfs)):
+            d_minsk.append(distance.minkowski(channel, imfs[k], 2))
+        feature_scaling(d_minsk)
+        logging.info("\n \n")
+
+            # features_vector += get_statistics_values(imfs)
         # return features_vector
 
 
