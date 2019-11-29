@@ -24,10 +24,11 @@ def get_dataset():
     _labels = EEG_data[14, :]  # len(168000)
     for subject in range(1, no_subjects + 1):
         s_index = consecutive_index(EEG_data[no_ch, :], subject)[0]  # [0, 20999]
-        for s_instance in range(s_index[0], s_index[1] + 1, samples_trial):
+        for s_instance in range(s_index[0] + 7000, s_index[1] + 1, samples_trial):
+            print("s_instance: ", s_instance)
             _instance = EEG_data[:no_ch, s_instance:s_instance + samples_trial]  # (14, 7000)
             max_instances = _instance.shape[1] / instance_len  # this is not necessary, but I added it just FYI, 27
-            for _i in range(0, 20):  # sub instances
+            for _i in range(0, 1):  # sub instances
                 if _i < max_instances:
                     index_start, index_end = instance_len * _i, instance_len * (_i + 1)
                     sub_instance = _instance[:, index_start:index_end]

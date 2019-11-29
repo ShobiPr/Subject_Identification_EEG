@@ -24,8 +24,8 @@ def get_imfs_emd(signal):
         if len(imfs) < 2:
             print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
             raise ValueError("imfs {}".format(len(imfs)))
-        #return imfs[:2]
-        return imfs
+        return imfs[:3]
+        #return imfs
     except Exception as e:
         raise e
 
@@ -175,11 +175,11 @@ def get_values_f(_vector, fs):
 
 # ------------------------------------------------------------------
 
-def get_features_bands(sub_instance, sr):
+def get_features_sub_bands(sub_instance, sr):
     features_vector = []
     for i, channel in enumerate(sub_instance):
-        sub_bands = frequency_bands(channel, sr)
-        features_vector += get_statistics_values(sub_bands)
+        freq_bands = frequency_bands(channel, sr)
+        features_vector += get_statistics_values(freq_bands)
     return features_vector
 
 
@@ -204,25 +204,26 @@ def feature_scaling(d_minsk):
     logging.info("\n")
     return scaling
 
+
 def get_features_emd(instance, fs):
     features_vector = []
     for i, channel in enumerate(instance):
-        logging.info("Channel: {0}".format(i))
         imfs = get_imfs_emd(channel)
-        d_minsk = []
-        for k in range(0, len(imfs)):
-            d_minsk.append(distance.minkowski(channel, imfs[k], 2))
-        feature_scaling(d_minsk)
-        logging.info("\n \n")
-
-            # features_vector += get_statistics_values(imfs)
-        # return features_vector
+        features_vector += get_HHT(imfs, fs)
+    return features_vector
 
 
-def get_features_eemd(_instance, fs):
+"""d_minsk = []
+for k in range(0, len(imfs)):
+    d_minsk.append(distance.minkowski(channel, imfs[k], 2))
+feature_scaling(d_minsk)
+logging.info("\n \n")"""
+
+"""def get_features_eemd(_instance, fs):
     features_vector = []
     for ch, channels in enumerate(_instance):
-        imfs = get_imfs_eemd(channels)
+        imfs = get_statistics_values(channels)
         # features_vector += get_HHT(imfs, fs)
         features_vector += get_energy_values(imfs)
     return features_vector
+"""

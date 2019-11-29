@@ -3,7 +3,6 @@ from __future__ import division
 import numpy as np
 import math
 from filters import butter_bandpass_filter, notch_filter
-from filters import butter_bandpass_filter
 import scipy.io as spio
 import matplotlib.pyplot as plt
 import warnings
@@ -13,7 +12,7 @@ warnings.filterwarnings("ignore")
 
 def preprocessing_P300(instances, f_instance, fs, ch, lowcut=0.5, highcut=70.0, order=6):
     """ Notch filter, f0 = 50, Q=10.0
-        bandpass : [0.5-70.0]Hz order:6 """
+        bandpass : [0.5-70.0] Hz order:6 """
     instance = np.array(instances[f_instance, :, 1:-1]).transpose()
     ins = instance[ch, :]
     filtered_instance = []
@@ -34,7 +33,7 @@ def preprocessing_resting(sub_instance):
 
 # --------------------------------------------------------------------
 
-
+"""
 def get_samples(_index, s_s_chs, sr, _size=1.3):
     return s_s_chs[_index:int(math.ceil(_index + (_size * sr)))][:]
 
@@ -184,3 +183,4 @@ def plot_resting():
 
     plt.show()
 
+"""
