@@ -7,7 +7,7 @@ from preprocessing import preprocessing_resting
 import scipy.io as spio
 import logging
 
-logging.basicConfig(filename='Validatoin_EMD3_HHT_ins20.log',
+logging.basicConfig(filename='Validation_EMD2_feature_selection.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -18,7 +18,7 @@ def consecutive_index(data, _value, stepsize=1):
     return [[min(a), max(a)] for a in result]
 
 
-def get_dataset(subject):
+def get_dataset(subject, ins):
     ch_fs_instances = []
     ch_tags_instances = []
     samples_trial = 7000  # samples per trial
@@ -33,7 +33,7 @@ def get_dataset(subject):
         _instance = EEG_data[:no_ch, s_instance:s_instance + samples_trial]  # (14, 7000)
         max_instances = _instance.shape[1] / instance_len  # this is not necessary, but I added it just FYI, 27
 
-        for _i in range(0, 20):  # sub instances
+        for _i in range(0, ins):  # sub instances
             if _i < max_instances:
                 index_start, index_end = instance_len * _i, instance_len * (_i + 1)
                 sub_instance = _instance[:, index_start:index_end]
@@ -65,12 +65,14 @@ def eval_model(dataset, clf):
     logging.info("\n")
 
 
-no_subjects = 8
-for subject in range(1, no_subjects + 1):
-    dataset = get_dataset(subject)
-    model = open('EMD_resting_HHT_ins20.sav', 'rb')
-    clf = pickle.load(model)
-    eval_model(dataset, clf)
+for ins in [10, 20]:
+    no_subjects = 8
+    for subject in range(1, no_subjects + 1):
+        dataset = get_dataset(subject, ins)
+        file_name = 'EMD2_resting_feature_selection_ins%2d.sav' % ins
+        model = open(file_name, 'rb')
+        clf = pickle.load(model)
+        eval_model(dataset, clf)
 
 
 

@@ -24,16 +24,10 @@ def get_imfs_emd(signal):
         if len(imfs) < 2:
             print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
             raise ValueError("imfs {}".format(len(imfs)))
-        return imfs[:3]
+        return imfs[:2]
         #return imfs
     except Exception as e:
         raise e
-
-
-def get_imfs_eemd(band):
-    eemd = EEMD(trials=5)
-    eIMFs = eemd(band, max_imf=4)
-    return eIMFs[2:]
 
 
 # ------------------------------------------------------------------
@@ -158,16 +152,16 @@ def get_HHT(imfs, fs):
     return feat
 
 
-def get_values_f(_vector, fs):
+def get_values_f_P300(_vector, fs):
     feat = []
     for ii, _vec in enumerate(_vector):
         feat += [
+            #instantaneous_energy(_vec),
+            #teager_energy(_vec),
+            #hfd(_vec),
             np.var(_vec),
             np.max(_vec),
             np.min(_vec),
-            hfd(_vec),
-            instantaneous_energy(_vec),
-            teager_energy(_vec),
             marginal_frequency(_vec, fs)
         ]
     return feat
@@ -179,7 +173,7 @@ def get_features_sub_bands(sub_instance, sr):
     features_vector = []
     for i, channel in enumerate(sub_instance):
         freq_bands = frequency_bands(channel, sr)
-        features_vector += get_statistics_values(freq_bands)
+        features_vector += get_HHT(freq_bands, sr)
     return features_vector
 
 
@@ -205,11 +199,17 @@ def feature_scaling(d_minsk):
     return scaling
 
 
+# --------------------------------------------------
+
 def get_features_emd(instance, fs):
     features_vector = []
     for i, channel in enumerate(instance):
         imfs = get_imfs_emd(channel)
-        features_vector += get_HHT(imfs, fs)
+        # features_vector += get_statistics_values(imfs)
+        # features_vector += get_fractal_values(imfs)
+        # features_vector += get_energy_values(imfs)
+        # features_vector += get_HHT(imfs, fs)
+        features_vector += get_values_f_P300(imfs, fs)
     return features_vector
 
 
