@@ -50,7 +50,6 @@ def instantaneous_energy(data):
 # ------------------------------------------------------------------
 # FRACTAL FEATURES
 
-
 def pfd(a):
     diff = np.diff(a)
     # x[i] * x[i-1] for i in t0 -> tmax
@@ -152,7 +151,7 @@ def get_features_sub_bands(sub_instance, sr):
     features_vector = []
     for i, channel in enumerate(sub_instance):
         freq_bands = frequency_bands(channel, sr)
-        features_vector += get_HHT(freq_bands, sr)
+        features_vector += get_energy_values(freq_bands)
     return features_vector
 
 
@@ -190,9 +189,9 @@ def get_features_emd(instance, fs):
         imfs = get_imfs_emd(channel)
         # features_vector += get_statistics_values(imfs)
         # features_vector += get_fractal_values(imfs)
-        # features_vector += get_energy_values(imfs)
+        features_vector += get_energy_values(imfs)
         # features_vector += get_HHT(imfs, fs)
-        features_vector += get_values_f_P300(imfs, fs)
+        # features_vector += get_values_f_P300(imfs, fs)
     return features_vector
 
 

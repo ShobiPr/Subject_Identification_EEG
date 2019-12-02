@@ -10,7 +10,7 @@ import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='EMD3_resting_stat.log',
+logging.basicConfig(filename='EMD2_resting_energy.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -22,7 +22,8 @@ def consecutive_index(data, _value, stepsize=1):
 
 
 def main():
-    logging.info(" ***** Resting state, EMD2, FEATURES: stat ***** \n")
+    logging.info(" ***** Resting state, EMD2, FEATURES: energy ***** \n")
+    logging.info("------------- with preprocessing ---------------")
 
     ch_fs_instances = []
     ch_tags_instances = []
@@ -62,7 +63,7 @@ def main():
         logging.info("Best classifier {0} with accuracy {1}".format(result['classifier'], result['accuracy']))
 
         # saving the model
-        model_name = 'EMD_resting_stat_ins%02d.sav' % ins
+        model_name = 'EMD_resting_energy_ins%02d.sav' % ins
         pickle.dump(result["model"], open(model_name, 'wb'))
 
 

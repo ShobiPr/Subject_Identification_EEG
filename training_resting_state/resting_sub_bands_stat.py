@@ -10,7 +10,7 @@ import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='EMD3_resting_stat.log',
+logging.basicConfig(filename='EMD2_resting_stat.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -23,6 +23,7 @@ def consecutive_index(data, _value, stepsize=1):
 
 def main():
     logging.info(" ***** Resting state, EMD2, FEATURES: stat ***** \n")
+    logging.info("------------- with preprocessing ---------------")
 
     ch_fs_instances = []
     ch_tags_instances = []
