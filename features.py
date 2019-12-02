@@ -5,34 +5,12 @@ from scipy.stats import skew
 from scipy.signal import hilbert
 import numpy as np
 from pyhht import EMD
-from PyEMD import EEMD
 from scipy.spatial import distance
 from filters import frequency_bands
-from math import *
 import logging
-from decimal import Decimal
 
 
-
-
-# Extract IMFs from EEG
-def get_imfs_emd(signal):
-    try:
-        decomposer_signal = EMD(signal)
-        # decomposer_signal = EMD(signal, fixe=100, n_imfs=2)
-        imfs = decomposer_signal.decompose()
-        if len(imfs) < 2:
-            print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
-            raise ValueError("imfs {}".format(len(imfs)))
-        return imfs[:2]
-        #return imfs
-    except Exception as e:
-        raise e
-
-
-# ------------------------------------------------------------------
 # HHT-BASED FEATURES
-
 
 def instFreq(signal, fs):
     hs = hilbert(signal)
@@ -156,9 +134,9 @@ def get_values_f_P300(_vector, fs):
     feat = []
     for ii, _vec in enumerate(_vector):
         feat += [
-            #instantaneous_energy(_vec),
-            #teager_energy(_vec),
-            #hfd(_vec),
+            instantaneous_energy(_vec),
+            teager_energy(_vec),
+            hfd(_vec),
             np.var(_vec),
             np.max(_vec),
             np.min(_vec),
@@ -168,6 +146,7 @@ def get_values_f_P300(_vector, fs):
 
 
 # ------------------------------------------------------------------
+#SUB-BANDS
 
 def get_features_sub_bands(sub_instance, sr):
     features_vector = []
@@ -177,15 +156,8 @@ def get_features_sub_bands(sub_instance, sr):
     return features_vector
 
 
-def p_root(value, root):
-    root_value = 1 / float(root)
-    return round(Decimal(value) **
-                 Decimal(root_value), 3)
-
-
-def minkowski_distance(x, y, p_value):
-    return p_root(sum(pow(abs(a - b), p_value) for a, b in zip(x, y)), p_value)
-
+# --------------------------------------------------
+# EMD
 
 def feature_scaling(d_minsk):
     scaling = []
@@ -199,7 +171,18 @@ def feature_scaling(d_minsk):
     return scaling
 
 
-# --------------------------------------------------
+def get_imfs_emd(signal):
+    try:
+        decomposer_signal = EMD(signal)
+        # decomposer_signal = EMD(signal, fixe=100, n_imfs=2)
+        imfs = decomposer_signal.decompose()
+        if len(imfs) < 2:
+            print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
+            raise ValueError("imfs {}".format(len(imfs)))
+        return imfs[:2]
+    except Exception as e:
+        raise e
+
 
 def get_features_emd(instance, fs):
     features_vector = []
@@ -218,12 +201,3 @@ for k in range(0, len(imfs)):
     d_minsk.append(distance.minkowski(channel, imfs[k], 2))
 feature_scaling(d_minsk)
 logging.info("\n \n")"""
-
-"""def get_features_eemd(_instance, fs):
-    features_vector = []
-    for ch, channels in enumerate(_instance):
-        imfs = get_statistics_values(channels)
-        # features_vector += get_HHT(imfs, fs)
-        features_vector += get_energy_values(imfs)
-    return features_vector
-"""

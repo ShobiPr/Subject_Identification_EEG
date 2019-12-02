@@ -1,13 +1,3 @@
 /P300/
-/rest/
-imf.py
-rest_dataset.py
-esemble_emd.py
-/training_models_resting_state/
-/training_model_P300/train
-/training_models
 /rand
-/PyEMD
-/minkowski
-/feature_selection
 /venv

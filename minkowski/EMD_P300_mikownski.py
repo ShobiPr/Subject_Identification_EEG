@@ -25,6 +25,7 @@ for subject in range(1, 2):  # 26
         _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
         instances = get_samples(_index, s_s_chs, sr)
         for f_instance in range(0, 60):
+
             logging.info("Instance: ", (f_instance+1))
             instance = np.array(instances[f_instance, :, 1:-1]).transpose()
             ch_fs_instances.append(get_features_emd(instance, sr))

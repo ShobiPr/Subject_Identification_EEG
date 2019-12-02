@@ -61,7 +61,6 @@ def knn(dataTraining, targetTraining):
     Creating KNN classifier
     '''
     NEIGHBORS = [2, 3, 4, 5, 6, 7, 8, 9, 10]
-    # NEIGHBORS = [1, 2, 3]
     clfArray = []
     meanScore = []
     for neighbor in NEIGHBORS:
@@ -73,17 +72,6 @@ def knn(dataTraining, targetTraining):
     position = meanScore.index(maxScore)
     bestNneighbor = NEIGHBORS[position]
     bestClf = clfArray[position]
-    # Try for bagging
-
-    # scoresBag = cross_val_score(clfBag, dataTraining, targetTraining, cv=C_F_V)
-    # scoreBag = scoresBag.mean()
-    """
-    if scoreBag >= maxScore:
-        maxScore = scoreBag
-        bestClf = clfBag
-        #clfBag = BaggingClassifier(KNeighborsClassifier(n_neighbors=bestNneighbor).fit(dataTraining,
-                                                                                      targetTraining))
-    """
     return {"classifier": (str(bestNneighbor) + "-NN (KNN)"), "accuracy": str(maxScore), "clf": bestClf}
 
 
