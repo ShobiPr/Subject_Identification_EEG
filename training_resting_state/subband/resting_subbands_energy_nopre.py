@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import scipy.io as spio
 import numpy as np
-from features import get_features_emd
-from preprocessing import preprocessing_resting
+from training_resting_state.subband.features import get_features_emd
 from classefiers import selector
 
 import pickle
@@ -10,7 +9,7 @@ import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='EMD2_resting_hht.log',
+logging.basicConfig(filename='subband_resting_energy_nopre.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -22,9 +21,7 @@ def consecutive_index(data, _value, stepsize=1):
 
 
 def main():
-    logging.info(" ***** Resting state, EMD2, FEATURES: hht ***** \n")
-    logging.info("------------- with preprocessing ---------------")
-
+    logging.info(" ***** Resting state, subband, FEATURES: energy ***** \n")
     ch_fs_instances = []
     ch_tags_instances = []
 
@@ -36,6 +33,7 @@ def main():
 
     for ins in [10, 20]:
         logging.info(" -------- Instance: {0} --------".format(ins))
+        logging.info(" ---------- No preprocessing ---------- \n \n")
         instance_len = sr * 2  # to create sub instances of 2 sec
         EEG_data = spio.loadmat('EID-M.mat', squeeze_me=True)['eeg_close_ubicomp_8sub'].T  # (15, 168000)
         _labels = EEG_data[14, :]  # len(168000)
@@ -51,8 +49,7 @@ def main():
                     if _i < max_instances:
                         index_start, index_end = instance_len * _i, instance_len * (_i + 1)
                         sub_instance = _instance[:, index_start:index_end]
-                        sub_ins = preprocessing_resting(sub_instance)
-                        ch_fs_instances.append(get_features_emd(sub_ins, sr))
+                        ch_fs_instances.append(get_features_emd(sub_instance))
                         ch_tags_instances.append('subject_{0}'.format(subject))
         dataset = {"data": ch_fs_instances, "target": ch_tags_instances}
 
@@ -63,7 +60,7 @@ def main():
         logging.info("Best classifier {0} with accuracy {1}".format(result['classifier'], result['accuracy']))
 
         # saving the model
-        model_name = 'EMD_resting_hht_ins%02d.sav' % ins
+        model_name = 'subband_resting_energy_nopre_ins%02d.sav' % ins
         pickle.dump(result["model"], open(model_name, 'wb'))
 
 

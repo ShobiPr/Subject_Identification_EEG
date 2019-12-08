@@ -99,6 +99,18 @@ def get_statistics_values(_vector):
     return feat
 
 
+def get_energy_features(imfs):
+    feat = []
+    for ii, imf in enumerate(imfs):
+        feat += [
+            instantaneous_energy(imf),
+            teager_energy(imf),
+            hfd(imf),
+            pfd(imf)
+        ]
+    return feat
+
+
 def get_fractal_values(imfs):
     feat = []
     for ii, imf in enumerate(imfs):
@@ -151,7 +163,7 @@ def get_features_sub_bands(sub_instance, sr):
     features_vector = []
     for i, channel in enumerate(sub_instance):
         freq_bands = frequency_bands(channel, sr)
-        features_vector += get_energy_values(freq_bands)
+        features_vector += get_statistics_values(freq_bands)
     return features_vector
 
 
@@ -173,30 +185,29 @@ def feature_scaling(d_minsk):
 def get_imfs_emd(signal):
     try:
         decomposer_signal = EMD(signal)
-        # decomposer_signal = EMD(signal, fixe=100, n_imfs=2)
         imfs = decomposer_signal.decompose()
+        """
         if len(imfs) < 2:
             print("imfs {} +++++++++++++++++++++++++++++++++++++++".format(len(imfs)))
-            raise ValueError("imfs {}".format(len(imfs)))
-        return imfs[:2]
+            raise ValueError("imfs {}".format(len(imfs)))"""
+        return imfs
     except Exception as e:
         raise e
 
 
-def get_features_emd(instance, fs):
+def get_features_emd(instance):
     features_vector = []
     for i, channel in enumerate(instance):
         imfs = get_imfs_emd(channel)
-        # features_vector += get_statistics_values(imfs)
-        # features_vector += get_fractal_values(imfs)
-        features_vector += get_energy_values(imfs)
-        # features_vector += get_HHT(imfs, fs)
-        # features_vector += get_values_f_P300(imfs, fs)
+        if len(imfs) > 1:
+            features_vector += get_energy_features(imfs[:2])
     return features_vector
 
 
-"""d_minsk = []
-for k in range(0, len(imfs)):
-    d_minsk.append(distance.minkowski(channel, imfs[k], 2))
-feature_scaling(d_minsk)
-logging.info("\n \n")"""
+"""
+d_minsk = []
+        for k in range(0, len(imfs)):
+            d_minsk.append(distance.minkowski(channel, imfs[k], 2))
+        feature_scaling(d_minsk)
+        logging.info("\n \n")"""
+
