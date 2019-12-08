@@ -1,7 +1,7 @@
 from temp.dataset_P300 import get_subdataset, get_samples
 from temp.features import get_features_emd
-from temp.preprocessing import preprocessing_P300
-from temp.classefiers import selector
+from preprocessing import preprocessing_P300
+from classefiers import selector
 
 import pickle
 import logging

@@ -3,7 +3,7 @@ from __future__ import division
 import numpy as np
 from temp.dataset_P300 import get_subdataset, get_samples
 from temp.features import get_features_sub_bands
-from temp.preprocessing import preprocessing_P300
+from preprocessing import preprocessing_P300
 
 import pickle
 import logging

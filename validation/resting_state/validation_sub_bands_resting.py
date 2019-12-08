@@ -3,7 +3,7 @@ from __future__ import division
 import numpy as np
 import pickle
 from temp.features import get_features_sub_bands
-from temp.preprocessing import preprocessing_resting
+from preprocessing import preprocessing_resting
 import scipy.io as spio
 import logging
 

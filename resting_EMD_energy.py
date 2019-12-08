@@ -2,14 +2,15 @@
 import scipy.io as spio
 import numpy as np
 from training_resting_state.EMD.features import get_features_emd
-from temp.classefiers import selector
+from training_resting_state.EMD.preprocessing import preprocessing_resting
+from classefiers import selector
 
 import pickle
 import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='EMD2_resting_energy_nopre.log',
+logging.basicConfig(filename='EMD_resting_energy.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -21,8 +22,7 @@ def consecutive_index(data, _value, stepsize=1):
 
 
 def main():
-    logging.info(" ***** Resting state, EMD , FEATURES: energy ***** ")
-    logging.info(" ---------- No preprocessing ---------- \n \n")
+    logging.info(" ***** Resting state, EMD, FEATURES: energy ***** \n")
 
     ch_fs_instances = []
     ch_tags_instances = []
@@ -50,7 +50,8 @@ def main():
                     if _i < max_instances:
                         index_start, index_end = instance_len * _i, instance_len * (_i + 1)
                         sub_instance = _instance[:, index_start:index_end]
-                        ch_fs_instances.append(get_features_emd(sub_instance))
+                        sub_ins = preprocessing_resting(sub_instance)
+                        ch_fs_instances.append(get_features_emd(sub_ins))
                         ch_tags_instances.append('subject_{0}'.format(subject))
         dataset = {"data": ch_fs_instances, "target": ch_tags_instances}
 
@@ -61,7 +62,7 @@ def main():
         logging.info("Best classifier {0} with accuracy {1}".format(result['classifier'], result['accuracy']))
 
         # saving the model
-        model_name = 'EMD_resting_energy_nopre_ins%02d.sav' % ins
+        model_name = 'EMD_resting_energy_ins%02d.sav' % ins
         pickle.dump(result["model"], open(model_name, 'wb'))
 
 
