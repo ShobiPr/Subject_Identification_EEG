@@ -1,7 +1,7 @@
-from dataset_P300 import get_subdataset, get_samples
-from features import get_features_sub_bands
-from preprocessing import preprocessing_P300
-from classefiers import selector
+from temp.dataset_P300 import get_subdataset, get_samples
+from temp.features import get_features_sub_bands
+from temp.preprocessing import preprocessing_P300
+from temp.classefiers import selector
 
 import pickle
 import logging

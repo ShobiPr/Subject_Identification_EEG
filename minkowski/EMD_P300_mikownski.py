@@ -1,9 +1,7 @@
-from dataset_P300 import get_subdataset, get_samples
+from temp.dataset_P300 import get_subdataset, get_samples
 import numpy as np
-from features import get_features_emd
-from classefiers import selector
+from temp.features import get_features_emd
 
-import pickle
 import logging
 import warnings
 

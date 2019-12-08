@@ -2,8 +2,7 @@
 from __future__ import division
 import numpy as np
 import scipy.io as spio
-from features import get_features_emd
-import matplotlib.pyplot as plt
+from temp.features import get_features_emd
 import warnings
 warnings.filterwarnings("ignore")
 

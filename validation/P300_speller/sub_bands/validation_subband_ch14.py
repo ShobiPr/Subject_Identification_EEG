@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 import numpy as np
-import pickle
-from dataset_P300 import get_subdataset, get_samples
-from features import get_features_sub_bands
-from preprocessing import preprocessing_P300
+from temp.dataset_P300 import get_subdataset, get_samples
+from temp.features import get_features_sub_bands
+from temp.preprocessing import preprocessing_P300
 
 import pickle
 import logging

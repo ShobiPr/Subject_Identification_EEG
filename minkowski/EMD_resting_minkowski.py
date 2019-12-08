@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import scipy.io as spio
 import numpy as np
-from features import get_features_emd
-from preprocessing import preprocessing_resting
+from temp.features import get_features_emd
+from temp.preprocessing import preprocessing_resting
 
 
 import logging

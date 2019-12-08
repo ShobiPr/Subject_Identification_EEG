@@ -2,7 +2,7 @@
 import scipy.io as spio
 import numpy as np
 from training_resting_state.EMD.features import get_features_emd
-from classefiers import selector
+from temp.classefiers import selector
 
 import pickle
 import logging

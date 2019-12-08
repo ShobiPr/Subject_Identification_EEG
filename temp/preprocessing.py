@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 import numpy as np
-import math
-from filters import butter_bandpass_filter, notch_filter
-import scipy.io as spio
-import matplotlib.pyplot as plt
+from temp.filters import butter_bandpass_filter, notch_filter
 import warnings
 
 warnings.filterwarnings("ignore")

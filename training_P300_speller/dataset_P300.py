@@ -1,4 +1,4 @@
-from preprocessing import preprocessing_P300
+from temp.preprocessing import preprocessing_P300
 import numpy as np
 import math
 
