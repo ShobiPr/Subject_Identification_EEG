@@ -1,14 +1,3 @@
-#!/bin/python3.6
-import statistics as stats
-from scipy.stats import kurtosis
-from scipy.stats import skew
-from scipy.signal import hilbert
-import numpy as np
-from pyhht import EMD
-from scipy.spatial import distance
-from filters import frequency_bands
-import logging
-
 
 # HHT-BASED FEATURES
 import statistics as stats
@@ -22,41 +11,7 @@ from filters import frequency_bands
 import logging
 
 
-def get_statistics_values(_vector):
-    feat = []
-    # For each imf compute 9 values and return it in a single vector. (5 values in this example)
-    # Mean, maximum, minimum, standard deviation, variance, kurtosis, skewness, sum and median
-    for ii, _vec in enumerate(_vector):
-        feat += [
-            stats.mean(_vec),  #
-            np.var(_vec),
-            np.std(_vec),
-            kurtosis(_vec),
-            skew(_vec),  #
-            np.max(_vec),
-            np.min(_vec),
-            stats.median(_vec)  #
-        ]
-    return feat
-
 # ------------------------------------------------------------------
-
-# EMD
-
-def get_imfs_emd(signal):
-    decomposer_signal = EMD(signal)
-    return decomposer_signal.decompose()
-
-
-def get_features_emd(instance):
-    features_vector = []
-    for i, channel in enumerate(instance):
-        imfs = get_imfs_emd(channel)
-        if len(imfs) > 1:
-            features_vector += get_statistics_values(imfs[:2])
-    return features_vector
-
-
 
 
 def instFreq(signal, fs):
@@ -141,8 +96,24 @@ def get_energy_features(_vector, fs):
         ]
     return feat
 
-# ------------------------------------------------------------------
 
+def get_statistics_values(_vector):
+    feat = []
+    # For each imf compute 9 values and return it in a single vector. (5 values in this example)
+    # Mean, maximum, minimum, standard deviation, variance, kurtosis, skewness, sum and median
+    for ii, _vec in enumerate(_vector):
+        feat += [
+            stats.mean(_vec),  #
+            np.var(_vec),
+            np.std(_vec),
+            kurtosis(_vec),
+            skew(_vec),  #
+            np.max(_vec),
+            np.min(_vec),
+            stats.median(_vec)  #
+        ]
+    return feat
+# ------------------------------------------------------------------
 # EMD
 
 def get_imfs_emd(signal):
@@ -150,10 +121,14 @@ def get_imfs_emd(signal):
     return decomposer_signal.decompose()
 
 
-def get_features_emd(instance, fs):
+def get_features_emd(instance, sr):
     features_vector = []
     for i, channel in enumerate(instance):
         imfs = get_imfs_emd(channel)
         if len(imfs) > 1: 
-            features_vector += get_energy_features(imfs[:2], fs)
+            features_vector += get_energy_features(imfs[:2], sr)
     return features_vector
+
+
+
+

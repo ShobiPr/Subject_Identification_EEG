@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import scipy.io as spio
 import numpy as np
-from training_resting_state.EMD.features import get_features_emd
+from features import get_features_emd
 from classefiers import selector
 
 import pickle
@@ -9,7 +9,7 @@ import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='EMD2_resting_energy_nopre.log',
+logging.basicConfig(filename='EMD_resting_energy_nopre.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -21,7 +21,7 @@ def consecutive_index(data, _value, stepsize=1):
 
 
 def main():
-    logging.info(" ***** Resting state, EMD , FEATURES: energy ***** ")
+    logging.info(" ***** Resting state, EMD , FEATURES: energy + hht ***** ")
     logging.info(" ---------- No preprocessing ---------- \n \n")
 
     ch_fs_instances = []
@@ -42,7 +42,7 @@ def main():
         for subject in range(1, no_subjects + 1):
             s_index = consecutive_index(EEG_data[no_ch, :], subject)[0]  # [0, 20999],
 
-            for s_instance in range(s_index[0], s_index[1] + 1, samples_subject):
+            for s_instance in range(s_index[0], s_index[0] + samples_trial + 1, samples_trial):
                 _instance = EEG_data[:no_ch, s_instance:s_instance + samples_trial]  # (14, 7000)
                 max_instances = _instance.shape[1] / instance_len  # this is not necessary, but I added it just FYI, 27
 
@@ -50,7 +50,7 @@ def main():
                     if _i < max_instances:
                         index_start, index_end = instance_len * _i, instance_len * (_i + 1)
                         sub_instance = _instance[:, index_start:index_end]
-                        ch_fs_instances.append(get_features_emd(sub_instance))
+                        ch_fs_instances.append(get_features_emd(sub_instance, sr))
                         ch_tags_instances.append('subject_{0}'.format(subject))
         dataset = {"data": ch_fs_instances, "target": ch_tags_instances}
 
