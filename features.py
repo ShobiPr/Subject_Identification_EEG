@@ -92,7 +92,7 @@ def get_energy_features(_vector, fs):
             hfd(_vec),
             pfd(_vec),
             marginal_frequency(_vec, fs),
-            mean_instAmp(_vec)
+            # mean_instAmp(_vec)
         ]
     return feat
 
@@ -135,7 +135,7 @@ def get_features_sub_bands(sub_instance, sr):
     features_vector = []
     for i, channel in enumerate(sub_instance):
         freq_bands = frequency_bands(channel, sr)
-        features_vector += get_energy_features(freq_bands, sr)
+        features_vector += get_statistics_values(freq_bands)
     return features_vector
 
 
