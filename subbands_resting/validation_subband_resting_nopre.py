@@ -2,12 +2,11 @@
 from __future__ import division
 import numpy as np
 import pickle
-from features import get_features_sub_bands
-from preprocessing import preprocessing_resting
+from features_old import get_features_sub_bands
 import scipy.io as spio
 import logging
 
-logging.basicConfig(filename='Validation_subband_resting_stat.log',
+logging.basicConfig(filename='Validation_subband_resting_stat_nopre.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -35,8 +34,7 @@ def get_dataset(subject, ins):
             if _i < max_instances:
                 index_start, index_end = instance_len * _i, instance_len * (_i + 1)
                 sub_instance = _instance[:, index_start:index_end]
-                sub_ins = preprocessing_resting(sub_instance)
-                ch_fs_instances.append(get_features_sub_bands(sub_ins,sr ))
+                ch_fs_instances.append(get_features_sub_bands(sub_instance, sr))
                 ch_tags_instances.append('subject_{0}'.format(subject))
                 # print('sub-instance {0} with shape {1} for subject {2}'.format(_i, sub_instance.shape, subject))
     return {"data": ch_fs_instances, "target": ch_tags_instances}
@@ -66,10 +64,10 @@ def eval_model(dataset, clf):
 
 for ins in [10, 20]:
     no_subjects = 8
+    logging.info(" -------- validation: stat --------")
     for subject in range(1, no_subjects + 1):
         dataset = get_dataset(subject, ins)
-        logging.info(" -------- validation: stat --------")
-        file_name = 'subband_resting_stat_ins%2d.sav' % ins
+        file_name = 'subband_resting_stat_nopre_ins%2d.sav' % ins
         model = open(file_name, 'rb')
         clf = pickle.load(model)
         eval_model(dataset, clf)

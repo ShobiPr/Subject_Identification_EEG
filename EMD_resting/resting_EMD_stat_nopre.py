@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import scipy.io as spio
 import numpy as np
-from features import get_features_emd
-from classefiers import selector
+from features_old import get_features_emd
+from temp.classefiers import selector
 
 import pickle
 import logging

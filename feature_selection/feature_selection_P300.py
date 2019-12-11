@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from preprocessing import preprocessing_P300
+from temp.preprocessing import preprocessing_P300
 from temp.dataset_P300 import get_subdataset, get_samples
 from temp.features import get_features_emd
 

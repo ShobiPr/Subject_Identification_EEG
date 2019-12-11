@@ -2,7 +2,7 @@
 import scipy.io as spio
 import numpy as np
 from temp.features import get_features_emd
-from preprocessing import preprocessing_resting
+from temp.preprocessing import preprocessing_resting
 
 
 import logging

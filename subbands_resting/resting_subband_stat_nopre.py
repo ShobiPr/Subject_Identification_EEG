@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 import scipy.io as spio
 import numpy as np
-from features import get_features_sub_bands
-from classefiers import selector
+from features_old import get_features_sub_bands
+from temp.classefiers import selector
 
 import pickle
 import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-logging.basicConfig(filename='subband_resting_energy_hht.log',
+logging.basicConfig(filename='subband_resting_stat_nopre.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -21,7 +21,7 @@ def consecutive_index(data, _value, stepsize=1):
 
 
 def main():
-    logging.info(" ***** Resting state, subband , FEATURES: energy + hht ***** ")
+    logging.info(" ***** Resting state, subband , FEATURES: stat ***** ")
     logging.info(" ---------- No preprocessing ---------- \n \n")
 
     ch_fs_instances = []
@@ -61,7 +61,7 @@ def main():
         logging.info("Best classifier {0} with accuracy {1}".format(result['classifier'], result['accuracy']))
 
         # saving the model
-        model_name = 'subband_resting_energy_hht_ins%02d.sav' % ins
+        model_name = 'subband_resting_stat_nopre_ins%02d.sav' % ins
         pickle.dump(result["model"], open(model_name, 'wb'))
 
 

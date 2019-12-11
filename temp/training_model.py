@@ -3,7 +3,7 @@ import numpy as np
 import math
 # from classefiers import selector
 from temp.features import get_features
-import preprocessing
+from temp import preprocessing
 import warnings
 
 warnings.filterwarnings("ignore")
