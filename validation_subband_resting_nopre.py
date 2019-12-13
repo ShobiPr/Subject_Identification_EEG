@@ -2,11 +2,11 @@
 from __future__ import division
 import numpy as np
 import pickle
-from features_old import get_features_sub_bands
+from features import get_features_sub_bands
 import scipy.io as spio
 import logging
 
-logging.basicConfig(filename='Validation_subband_resting_stat_nopre.log',
+logging.basicConfig(filename='Validation_subband_resting_energy_nopre.log',
                     level=logging.INFO,
                     format='%(levelname)s:%(message)s')
 
@@ -67,7 +67,7 @@ for ins in [10, 20]:
     logging.info(" -------- validation: stat --------")
     for subject in range(1, no_subjects + 1):
         dataset = get_dataset(subject, ins)
-        file_name = 'subband_resting_stat_nopre_ins%2d.sav' % ins
+        file_name = 'subband_resting_energy_nopre_ins%2d.sav' % ins
         model = open(file_name, 'rb')
         clf = pickle.load(model)
         eval_model(dataset, clf)

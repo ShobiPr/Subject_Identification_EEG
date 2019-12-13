@@ -98,10 +98,12 @@ def selector(dataTraining, targetTraining):
     '''
     Creating the classifier
     '''
+    print("classification started")
     classArray = []
     accuracyArray = []
     clfArray = []
     for i, classifier in enumerate(CLASSIFIERS):
+        print("classifier i: ", i)
         results = classifier(dataTraining, targetTraining)
         classArray.append(results["classifier"])
         accuracyArray.append(results["accuracy"])
@@ -117,8 +119,8 @@ def selector(dataTraining, targetTraining):
 
 C_F_V = 10
 RANDOM_STATE = 0
-CLASSIFIERS = [lambda l_dt, l_tt: SVM(l_dt, l_tt),
-               lambda l_dt, l_tt: random_forest(l_dt, l_tt),
+CLASSIFIERS = [lambda l_dt, l_tt: random_forest(l_dt, l_tt),
                lambda l_dt, l_tt: decision_tree(l_dt, l_tt),
                lambda l_dt, l_tt: knn(l_dt, l_tt),
-               lambda l_dt, l_tt: naive_bayes(l_dt, l_tt)]
+               lambda l_dt, l_tt: naive_bayes(l_dt, l_tt),
+               lambda l_dt, l_tt: SVM(l_dt, l_tt)]

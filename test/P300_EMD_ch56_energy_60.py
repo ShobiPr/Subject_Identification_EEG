@@ -24,10 +24,12 @@ def main():
         ch_fs_instances = []
         ch_tags_instances = []
         for subject in range(1, 27):  # 26
+            print("subject: ", subject)
             for session in range(1, 5):  # 4
                 s_s_chs = get_subdataset(subject, session)
                 _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
                 instances = get_samples(_index, s_s_chs, sr)
+                print("session: ", session)
                 for f_instance in range(0, ins):
                     if f_instance not in [15, 21, 23, 45]:
                         instance = preprocessing_P300(instances, f_instance, sr)
