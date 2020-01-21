@@ -1,22 +1,24 @@
 import matplotlib.pyplot as plt
 
-EMD_ch7 = [0.7462, 0.7563, 0.7661, 0.7704]
-EMD_ch56 = [0.9125, 0.9370, 0.9399, 0.9514]
-EMD_ch7_nopre = [0.9260, 0.9408, 0.9326, 0.9407]
-EMD_ch56_nopre = [0.9952, 0.9899, 0.9870, 0.9912]
+lin_SVM = [0.94, 0.99, 0.99]
+RF = [0.79, 0.85, 0.90, ]
+DT = [0.87, 0.92, 0.94]
+k_NN = [0.92, 0.97, 0.97]
+NB = [0.83, 0.79, 0.80]
 
-
-x = [10, 20, 30, 40]
+x = [7, 32, 56]
 xi = list(range(len(x)))
-plt.plot(xi, EMD_ch7, '-.', marker='o', color='C0',  label='7 channels w/ preprocessing')
-plt.plot(xi, EMD_ch56, marker='o', color='C0', label='56 channels w/ preprocessing')
-plt.plot(xi, EMD_ch7_nopre, '-.', marker='o', color='C3', label='7 channels, no preprocessing')
-plt.plot(xi,EMD_ch56_nopre, marker='o', color='C3', label='56 channels, no preprocessing')
-plt.xlabel('Instances')
+plt.plot(xi, lin_SVM, marker='o', color='C1',  label='linear SVM')
+plt.plot(xi, RF, marker='o', color='C2', label='Random forest')
+plt.plot(xi, k_NN, marker='o', color='C3', label='Decision tree')
+plt.plot(xi, DT, marker='o', color='C4', label='k-NN')
+plt.plot(xi, NB, marker='o', color='C5', label='naive Bayes')
+plt.xlabel('Channels')
 plt.ylabel('Accuracy')
 plt.xticks(xi, x)
-plt.title('Accuracy for P300-speller [EMD]')
-plt.legend()
-plt.savefig('accuracy_EMD_P300.eps', format='eps')
+# plt.title('Accuracy for P300-speller [EMD]')
+plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+plt.grid()
+plt.savefig('accuracy_classifiers.png', format='eps')
 
 plt.show()

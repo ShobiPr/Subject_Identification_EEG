@@ -11,9 +11,6 @@ import logging
 import warnings
 
 warnings.filterwarnings("ignore")
-#logging.basicConfig(filename='EEMD.log',
-#                    level=logging.INFO,
-#                    format='%(levelname)s:%(message)s')
 
 
 def decision_tree(dataTraining, targetTraining):

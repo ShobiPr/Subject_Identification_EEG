@@ -94,6 +94,25 @@ def get_energy_features(_vector, fs):
         ]
     return feat
 
+
+def get_statistics_values(_vector):
+    feat = []
+    # For each imf compute 9 values and return it in a single vector. (5 values in this example)
+    # Mean, maximum, minimum, standard deviation, variance, kurtosis, skewness, sum and median
+    for ii, _vec in enumerate(_vector):
+        feat += [
+            stats.mean(_vec),  #
+            np.var(_vec),
+            np.std(_vec),
+            kurtosis(_vec),
+            skew(_vec),  #
+            np.max(_vec),
+            np.min(_vec),
+            stats.median(_vec)  #
+        ]
+    return feat
+
+
 # ------------------------------------------------------------------
 
 # EMD
@@ -109,4 +128,12 @@ def get_features_emd(instance, fs):
         imfs = get_imfs_emd(channel)
         if len(imfs) > 1: 
             features_vector += get_energy_features(imfs[:2], fs)
+    return features_vector
+
+
+def get_features_sub_bands(sub_instance, sr):
+    features_vector = []
+    for i, channel in enumerate(sub_instance):
+        freq_bands = frequency_bands(channel, sr)
+        features_vector += get_energy_features(freq_bands, sr)
     return features_vector

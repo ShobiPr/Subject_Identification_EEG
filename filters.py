@@ -182,7 +182,6 @@ def lp():
     plt.show()
 
 
-
 """
     # Get the filter coefficients so we can check its frequency response.
     b, a = butter_lowpass(cutoff, fs, order)
