@@ -137,3 +137,10 @@ def get_features_sub_bands(sub_instance, sr):
         freq_bands = frequency_bands(channel, sr)
         features_vector += get_energy_features(freq_bands, sr)
     return features_vector
+
+def get_features_sub_bands(sub_instance, sr):
+    features_vector = []
+    for i, channel in enumerate(sub_instance):
+        freq_bands = frequency_bands(channel, sr)
+        features_vector += get_energy_features(freq_bands, sr)
+    return features_vector
