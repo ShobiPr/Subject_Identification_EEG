@@ -2,8 +2,8 @@
 import scipy.io as spio
 import numpy as np
 from features import get_features_emd
-from temp.preprocessing import preprocessing_resting
-from temp.classefiers import selector
+from preprocessing import preprocessing_resting
+from classefiers import selector
 
 import pickle
 import logging

@@ -16,15 +16,16 @@ logging.basicConfig(filename='P300_subband_ch7_energy_nopre.log',
 def main():
     logging.info(" ***** subband, CHANNELS:7, FEATURES: energy ***** \n")
     logging.info("--------------no preprocessing--------------")
-    INSTANCES = [10, 20, 40, 60]
+    INSTANCES = [10]
+    SUBJECTS = [2, 6, 7, 11, 12]
     sr = 200
     ch = [1, 42, 46, 51, 52, 54, 55]
     for ins in INSTANCES:
         logging.info(" -------- Instance: {0} --------".format(ins))
         ch_fs_instances = []
         ch_tags_instances = []
-        for subject in range(1, 27):  # 26
-            for session in range(1, 5):  # 4
+        for subject in SUBJECTS:  # 26
+            for session in range(1, 2):  # 4
                 s_s_chs = get_subdataset(subject, session)
                 _index = [i + 1 for i, d in enumerate(s_s_chs[:, -1]) if d == 1]
                 instances = get_samples(_index, s_s_chs, sr)
@@ -42,8 +43,8 @@ def main():
         logging.info("Best classifier {0} with accuracy {1} \n".format(result['classifier'], result['accuracy']))
 
         # saving the model
-        model_name = 'P300_subband_ch7_energy_nopre_ins%02d.sav' % ins
-        pickle.dump(result["model"], open(model_name, 'wb'))
+        #model_name = 'P300_subband_ch7_energy_nopre_ins%02d.sav' % ins
+        #pickle.dump(result["model"], open(model_name, 'wb'))
 
 
 if __name__ == '__main__':

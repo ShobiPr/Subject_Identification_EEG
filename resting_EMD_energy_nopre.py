@@ -2,7 +2,7 @@
 import scipy.io as spio
 import numpy as np
 from features import get_features_emd
-from temp.classefiers import selector
+from classefiers import selector
 
 import pickle
 import logging
@@ -56,13 +56,16 @@ def main():
 
         dataTraining = dataset['data']
         targetTraining = dataset['target']
-        result = selector(dataTraining, targetTraining)
 
-        logging.info("Best classifier {0} with accuracy {1}".format(result['classifier'], result['accuracy']))
+        print("targetTraining: ", targetTraining)
+
+        #result = selector(dataTraining, targetTraining)
+
+        #logging.info("Best classifier {0} with accuracy {1}".format(result['classifier'], result['accuracy']))
 
         # saving the model
-        model_name = 'EMD_resting_energy_nopre_ins%02d.sav' % ins
-        pickle.dump(result["model"], open(model_name, 'wb'))
+        #model_name = 'EMD_resting_energy_nopre_ins%02d.sav' % ins
+        #pickle.dump(result["model"], open(model_name, 'wb'))
 
 
 if __name__ == '__main__':
